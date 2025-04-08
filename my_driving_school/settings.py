@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'appointments',
     'lessonpackages',
+    'planning',
     ]
 
 MIDDLEWARE = [

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Schedule{% endblock %}
+{% block content %}
+    <h1>Your Schedule</h1>
+    {% if appointments %}
+      <ul>
+        {% for appointment in appointments %}
+          <li>
+            On {{ appointment.date }} at {{ appointment.time }}:
+            {% if appointment.student %}
+              {% if request.user.role == "student" %}
+                With Instructor {{ appointment.instructor.username }}
+              {% else %}
+                Student: {{ appointment.student.username }} - Instructor: {{ appointment.instructor.username }}
+              {% endif %}
+            {% else %}
+              Appointment details unavailable.
+            {% endif %}
+            (Location: {{ appointment.location }}, Status: {{ appointment.get_status_display }})
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No appointments scheduled.</p>
+    {% endif %}
+{% endblock %}
