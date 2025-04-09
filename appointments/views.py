@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.views.generic import TemplateView
 
-# Create your views here.
+class AppointmentListView(TemplateView):
+    template_name = 'appointments/list.html'
+
+class GeneralScheduleView(TemplateView):
+    template_name = 'appointments/general_schedule.html'

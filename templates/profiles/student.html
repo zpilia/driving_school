@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Student Profile{% endblock %}
+{% block content %}
+  <h1>Welcome, {{ user.username }} (Student)</h1>
+  <section id="schedule">
+    <h2>My Appointments</h2>
+    <!-- Vous pouvez intégrer ici une liste (ou un calendrier) des rendez-vous récupérés via une vue -->
+    {% if appointments %}
+      <ul>
+        {% for app in appointments %}
+          <li>
+            {{ app.date }} at {{ app.time }} - {{ app.location }} (Instructor: {{ app.instructor.username }})
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No appointments scheduled.</p>
+    {% endif %}
+  </section>
+  
+  <section id="lesson_progress">
+    <h2>Lesson Package Progress</h2>
+    <!-- Par exemple, afficher total vs used hours; cette donnée peut provenir d'un modèle LessonPackage -->
+    {% if lesson_package %}
+      <p>Total Hours: {{ lesson_package.total_hours }}</p>
+      <p>Used Hours: {{ lesson_package.used_hours }}</p>
+      <p>Remaining: {{ lesson_package.remaining_hours }}</p>
+    {% else %}
+      <p>No lesson package data available.</p>
+    {% endif %}
+  </section>
+{% endblock %}

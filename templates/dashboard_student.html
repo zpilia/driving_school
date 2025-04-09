@@ -1,6 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Dashboard Étudiant{% endblock %}
+{% block title %}Student Dashboard{% endblock %}
 {% block content %}
-  <h1>Bonjour {{ user.username }}, bienvenue sur votre dashboard étudiant.</h1>
-  <p>Votre planning de rendez-vous et l’avancement de vos forfaits seront affichés ici.</p>
+  <h1>Welcome, {{ user.username }} (Student)</h1>
+  
+  <h2>My Schedule</h2>
+  {% if appointments %}
+    <ul>
+      {% for appt in appointments %}
+        <li>{{ appt.date }} at {{ appt.time }} with Instructor {{ appt.instructor.username }} ({{ appt.location }})</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No appointments scheduled yet.</p>
+  {% endif %}
+  
+  <h2>Lesson Packages</h2>
+  {% if lesson_packages %}
+    <ul>
+      {% for lp in lesson_packages %}
+        <li>Total Hours: {{ lp.total_hours }}, Used Hours: {{ lp.used_hours }} – Remaining: {{ lp.remaining_hours }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No lesson packages available.</p>
+  {% endif %}
 {% endblock %}

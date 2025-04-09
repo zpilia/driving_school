@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Manage Accounts{% endblock %}
+{% block content %}
+  <h1>Manage Student and Instructor Accounts</h1>
+  <p><a href="{% url 'accounts:account_create' %}">Create New Account</a></p>
+  {% if accounts %}
+    <ul>
+      {% for account in accounts %}
+        <li>
+          {{ account.username }} ({{ account.role }}) - {{ account.email }}
+          <a href="{% url 'accounts:account_update' account.pk %}">Edit</a>
+          <a href="{% url 'accounts:account_delete' account.pk %}">Delete</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No accounts found.</p>
+  {% endif %}
+{% endblock %}

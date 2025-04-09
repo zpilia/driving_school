@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ view.object|default:"Create" }} Account{% endblock %}
+{% block content %}
+  <h1>{{ view.object|default:"Create" }} Account</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}

@@ -1,6 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 {% block content %}
-  <h1>Bonjour {{ user.username }}, bienvenue sur votre dashboard administrateur.</h1>
-  <p>Vous avez tous les droits, y compris la gestion des comptes secrétaires.</p>
+  <h1>Welcome, {{ user.username }} (Admin)</h1>
+  
+  <h2>Manage Student & Instructor Accounts</h2>
+  <h3>Students:</h3>
+  {% if students %}
+    <ul>
+      {% for student in students %}
+        <li>{{ student.username }} - {{ student.email }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No students found.</p>
+  {% endif %}
+  
+  <h3>Instructors:</h3>
+  {% if instructors %}
+    <ul>
+      {% for instructor in instructors %}
+        <li>{{ instructor.username }} - {{ instructor.email }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No instructors found.</p>
+  {% endif %}
+  
+  <h2>Manage Secretary Accounts</h2>
+  {% if secretaries %}
+    <ul>
+      {% for sec in secretaries %}
+        <li>{{ sec.username }} - {{ sec.email }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No secretaries found.</p>
+  {% endif %}
 {% endblock %}

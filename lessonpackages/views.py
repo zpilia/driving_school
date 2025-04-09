@@ -1,3 +1,4 @@
-from django.shortcuts import render
+from django.views.generic import TemplateView
 
-# Create your views here.
+class LessonPackageManageView(TemplateView):
+    template_name = 'lessonpackages/manage.html'
