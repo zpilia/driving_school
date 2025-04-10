@@ -4,59 +4,51 @@
     {% load static %}
     <meta charset="UTF-8">
     <title>{% block title %}Intranet Auto-école{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body>
+
+<body class="bg-gray-100 text-gray-900">
     <header>
         <nav>
             <ul>
                 {% if user.is_authenticated %}
-                    <!-- Common Link: Profile -->
                     <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
-                    
                     {% if user.role == 'student' %}
                         <li><a href="{% url 'accounts:dashboard' %}">Student Dashboard</a></li>
                         <li><a href="{% url 'schedule' %}">My Schedule</a></li>
                         <li><a href="{% url 'lessonpackages:list' %}">My Lesson Packages</a></li>
-                    
                     {% elif user.role == 'instructor' %}
                         <li><a href="{% url 'accounts:dashboard' %}">Instructor Dashboard</a></li>
                         <li><a href="{% url 'schedule' %}">My Schedule</a></li>
                         <li><a href="{% url 'appointments:list' %}">Manage Appointments</a></li>
                         <li><a href="{% url 'accounts:student_list' %}">Student Files</a></li>
-                    
                     {% elif user.role == 'secretary' %}
                         <li><a href="{% url 'accounts:dashboard' %}">Secretary Dashboard</a></li>
-                        <!-- Mise à jour ici : on utilise account_list -->
                         <li><a href="{% url 'accounts:account_list' %}">Manage Student/Instructor Accounts</a></li>
                         <li><a href="{% url 'lessonpackages:manage' %}">Add Lesson Hours</a></li>
                         <li><a href="{% url 'appointments:general_schedule' %}">General Schedule</a></li>
-                    
                     {% elif user.role == 'admin' %}
                         <li><a href="{% url 'accounts:dashboard' %}">Admin Dashboard</a></li>
-                        <!-- Mise à jour ici également -->
                         <li><a href="{% url 'accounts:account_list' %}">Manage Student/Instructor Accounts</a></li>
                         <li><a href="{% url 'accounts:manage_secretaries' %}">Manage Secretary Accounts</a></li>
                         <li><a href="{% url 'lessonpackages:manage' %}">Manage Lesson Hours</a></li>
                         <li><a href="{% url 'appointments:general_schedule' %}">General Schedule</a></li>
                     {% endif %}
-                    
-                    <!-- Logout link -->
                     <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
-                    <!-- For users not logged in -->
                     <li><a href="{% url 'login' %}">Login</a></li>
                 {% endif %}
             </ul>
         </nav>
     </header>
-    
-    <main>
+
+    <main class="p-4">
         {% block content %}
         {% endblock %}
     </main>
-    
-    <footer>
+
+    <footer class="text-center py-6 text-sm text-gray-500">
         <p>&copy; Auto-école</p>
     </footer>
 </body>
