@@ -18,6 +18,7 @@
                         <li><a href="{% url 'accounts:dashboard' %}">Student Dashboard</a></li>
                         <li><a href="{% url 'schedule' %}">My Schedule</a></li>
                         <li><a href="{% url 'lessonpackages:list' %}">My Lesson Packages</a></li>
+                        <li><a href="{% url 'appointments:list' %}">My Appointments</a></li>
                     {% elif user.role == 'instructor' %}
                         <li><a href="{% url 'accounts:dashboard' %}">Instructor Dashboard</a></li>
                         <li><a href="{% url 'schedule' %}">My Schedule</a></li>
