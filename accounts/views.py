@@ -126,8 +126,37 @@ class AccountListView(LoginRequiredMixin, ListView):
     template_name = 'accounts/account_list.html'
     context_object_name = 'accounts'
     def get_queryset(self):
-        # Liste seulement les étudiants et instructeurs pour la gestion
-        return CustomUser.objects.filter(role__in=['student', 'instructor'])
+        queryset = CustomUser.objects.filter(role__in=['student', 'instructor'])
+
+        search = self.request.GET.get('search', '')
+        roles = self.request.GET.getlist('role')  # Liste des rôles sélectionnés
+        is_active = self.request.GET.get('is_active')  # Valeur pour le filtre 'actif'
+
+        # Filtrage par recherche (nom, prénom, email, etc.)
+        if search:
+            queryset = queryset.filter(
+                Q(username__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)
+            )
+
+        if roles:
+            queryset = queryset.filter(role__in=roles)
+
+        if is_active == '1':
+            queryset = queryset.filter(is_active=True)
+        elif is_active == '0':
+            queryset = queryset.filter(is_active=False)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected_roles'] = self.request.GET.getlist('role')
+        context['search'] = self.request.GET.get('search', '')
+        context['is_active'] = self.request.GET.get('is_active', '')
+        return context
 
 @method_decorator(secretary_or_admin_required, name='dispatch')
 class AccountCreateView(LoginRequiredMixin, CreateView):
