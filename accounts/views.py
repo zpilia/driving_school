@@ -28,15 +28,24 @@ from django.conf import settings
 @login_required
 @role_required(['student'])
 def student_dashboard(request):
-    # Récupère les rendez-vous et forfaits associés à l'étudiant connecté
-    appointments = Appointment.objects.filter(student=request.user)
+    # Retrieve the next scheduled appointment for the logged-in student
+    next_appointment = (
+        Appointment.objects
+        .filter(student=request.user, status='scheduled')
+        .order_by('date', 'time')
+        .first()
+    )
+
+    # Retrieve all lesson packages linked to the student
     lesson_packages = LessonPackage.objects.filter(student=request.user)
+
     context = {
         'user': request.user,
-        'appointments': appointments,
+        'next_appointment': next_appointment,
         'lesson_packages': lesson_packages,
     }
     return render(request, 'dashboard_student.html', context)
+
 
 @login_required
 @role_required(['instructor'])

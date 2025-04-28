@@ -9,81 +9,59 @@
     Welcome, {{ user.get_full_name|default:user.username }} (Student)
   </h1>
 
-  <!-- Schedule Section -->
+  <!-- Next Appointment Section -->
   <section class="mb-10">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">🗓️ My Schedule</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">🗓️ My Next Appointment</h2>
 
-    {% if appointments %}
+    {% if next_appointment %}
       <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
         <table class="min-w-full table-auto divide-y divide-gray-200">
           <thead class="bg-red-50">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Heure</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Instructeur</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lieu</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Instructor</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            {% for appt in appointments %}
-              <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 text-sm text-gray-900">{{ appt.date|date:"d/m/Y" }}</td>
-                <td class="px-6 py-4 text-sm text-gray-900">{{ appt.time|time:"H:i" }}</td>
-                <td class="px-6 py-4 text-sm text-gray-900">
-                  {{ appt.instructor.get_full_name|default:appt.instructor.username }}
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-900">{{ appt.location }}</td>
-                <td class="px-6 py-4 text-sm text-gray-900">
-                  <span class="inline-block px-2 py-1 text-xs font-semibold rounded
-                    {% if appt.status == 'scheduled' %}
-                      bg-yellow-100 text-yellow-800
-                    {% elif appt.status == 'completed' %}
-                      bg-green-100 text-green-800
-                    {% elif appt.status == 'cancelled' %}
-                      bg-red-100 text-red-800
-                    {% endif %}
-                  ">
-                    {{ appt.get_status_display }}
-                  </span>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p class="text-gray-600 italic">No appointments scheduled yet.</p>
-    {% endif %}
-  </section>
-
-  <!-- Lesson Packages Section -->
-  <section>
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">📚 My Lesson Packages</h2>
-
-    {% if lesson_packages %}
-      <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
-        <table class="min-w-full table-auto divide-y divide-gray-200">
-          <thead class="bg-red-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Hours</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Used Hours</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Remaining Hours</th>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="px-6 py-4 text-sm text-gray-900">{{ next_appointment.date|date:"d/m/Y" }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ next_appointment.time|time:"H:i" }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                {{ next_appointment.instructor.get_full_name|default:next_appointment.instructor.username }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ next_appointment.location }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                <span class="inline-block px-2 py-1 text-xs font-semibold rounded
+                  {% if next_appointment.status == 'scheduled' %}
+                    bg-yellow-100 text-yellow-800
+                  {% elif next_appointment.status == 'completed' %}
+                    bg-green-100 text-green-800
+                  {% elif next_appointment.status == 'cancelled' %}
+                    bg-red-100 text-red-800
+                  {% endif %}
+                ">
+                  {{ next_appointment.get_status_display }}
+                </span>
+              </td>
             </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for lp in lesson_packages %}
-              <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 text-sm text-gray-900">{{ lp.total_hours }}</td>
-                <td class="px-6 py-4 text-sm text-gray-900">{{ lp.used_hours }}</td>
-                <td class="px-6 py-4 text-sm text-gray-900">{{ lp.remaining_hours }}</td>
-              </tr>
-            {% endfor %}
           </tbody>
         </table>
       </div>
+
+      <!-- Button to View Full Schedule -->
+      <div class="mt-6 text-center">
+        <a href="{% url 'schedule' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
+          View Full Schedule →
+        </a>
+      </div>
+
     {% else %}
-      <p class="text-gray-600 italic">No lesson packages available.</p>
+      <p class="text-gray-600 italic">
+        No upcoming appointments scheduled.
+      </p>
     {% endif %}
   </section>
 
