@@ -5,6 +5,7 @@ class ScheduleListView(ListView):
     model = Appointment
     template_name = 'planning/schedule_list.html'
     context_object_name = 'appointments'
+    paginate_by = 10
 
     def get_queryset(self):
         user = self.request.user
