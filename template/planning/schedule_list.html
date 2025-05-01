@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Mon Planning{% endblock %}
+{% block title %}My Schedule{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <h1 class="text-3xl font-bold text-blue-800 mb-6 text-center">Mon Planning</h1>
+  <h1 class="text-3xl font-bold text-blue-800 mb-6 text-center">My Schedule</h1>
 
   {% if appointments %}
     <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
@@ -13,53 +13,71 @@
         <thead class="bg-red-50">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Heure</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
             {% if request.user.role == "student" %}
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Instructeur</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Instructor</th>
             {% else %}
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Élève</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Instructeur</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Instructor</th>
             {% endif %}
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lieu</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          {% for appointment in appointments %}
-            <tr class="hover:bg-gray-50 transition">
-              <td class="px-6 py-4 text-sm text-gray-900">{{ appointment.date|date:"d/m/Y" }}</td>
-              <td class="px-6 py-4 text-sm text-gray-900">{{ appointment.time|time:"H:i" }}</td>
+          {% regroup appointments by status as status_list %}
 
-              {% if request.user.role == "student" %}
-                <td class="px-6 py-4 text-sm text-gray-900">
-                  {{ appointment.instructor.get_full_name|default:appointment.instructor.username }}
-                </td>
-              {% else %}
-                <td class="px-6 py-4 text-sm text-gray-900">
-                  {{ appointment.student.get_full_name|default:appointment.student.username }}
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-900">
-                  {{ appointment.instructor.get_full_name|default:appointment.instructor.username }}
-                </td>
-              {% endif %}
-
-              <td class="px-6 py-4 text-sm text-gray-900">{{ appointment.location }}</td>
-              <td class="px-6 py-4 text-sm text-gray-900">
-                <span class="inline-block px-2 py-1 text-xs font-semibold rounded
-                  {% if appointment.status == 'scheduled' %}
-                    bg-yellow-100 text-yellow-800
-                  {% elif appointment.status == 'completed' %}
-                    bg-green-100 text-green-800
-                  {% elif appointment.status == 'cancelled' %}
-                    bg-red-100 text-red-800
-                  {% endif %}
-                ">
-                  {{ appointment.get_status_display }}
-                </span>
+          {% for group in status_list %}
+            <!-- Titre du groupe de statut -->
+            <tr class="bg-gray-100">
+              <td colspan="100%" class="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase">
+                {% if group.grouper == 'scheduled' %}
+                  Upcoming Appointments
+                {% elif group.grouper == 'completed' %}
+                  Completed Appointments
+                {% elif group.grouper == 'cancelled' %}
+                  Cancelled Appointments
+                {% endif %}
               </td>
             </tr>
+
+            {% for appointment in group.list %}
+              <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4 text-sm text-gray-900">{{ appointment.date|date:"d/m/Y" }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ appointment.time|time:"H:i" }}</td>
+
+                {% if request.user.role == "student" %}
+                  <td class="px-6 py-4 text-sm text-gray-900">
+                    {{ appointment.instructor.get_full_name|default:appointment.instructor.username }}
+                  </td>
+                {% else %}
+                  <td class="px-6 py-4 text-sm text-gray-900">
+                    {{ appointment.student.get_full_name|default:appointment.student.username }}
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-900">
+                    {{ appointment.instructor.get_full_name|default:appointment.instructor.username }}
+                  </td>
+                {% endif %}
+
+                <td class="px-6 py-4 text-sm text-gray-900">{{ appointment.location }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  <span class="inline-block px-2 py-1 text-xs font-semibold rounded
+                    {% if appointment.status == 'scheduled' %}
+                      bg-yellow-100 text-yellow-800
+                    {% elif appointment.status == 'completed' %}
+                      bg-green-100 text-green-800
+                    {% elif appointment.status == 'cancelled' %}
+                      bg-red-100 text-red-800
+                    {% endif %}
+                  ">
+                    {{ appointment.get_status_display }}
+                  </span>
+                </td>
+              </tr>
+            {% endfor %}
           {% endfor %}
         </tbody>
+
       </table>
     </div>
 
@@ -68,30 +86,30 @@
       <div class="flex justify-center items-center space-x-4 mt-6">
         {% if page_obj.has_previous %}
           <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-            Page précédente
+            Previous Page
           </a>
         {% endif %}
-        <span class="text-gray-700">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+        <span class="text-gray-700">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
         {% if page_obj.has_next %}
           <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-            Page suivante
+            Next Page
           </a>
         {% endif %}
       </div>
     {% endif %}
 
   {% else %}
-    <p class="text-center text-gray-500 mt-8">Aucun créneau trouvé.</p>
+    <p class="text-center text-gray-500 mt-8">No appointments found.</p>
   {% endif %}
 
-  <!-- Bouton Retour Accueil -->
-    <div class="mt-8 text-center">
-      <a href="{% url 'home' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
-        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Retour à l'accueil
-      </a>
-    </div>
+  <!-- Back to Home Button -->
+  <div class="mt-8 text-center">
+    <a href="{% url 'home' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
+      <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Back to Home
+    </a>
+  </div>
 </div>
 {% endblock %}
