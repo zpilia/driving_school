@@ -28,6 +28,7 @@ from django.conf import settings
 @login_required
 @role_required(['student'])
 def student_dashboard(request):
+    appointments = Appointment.objects.filter(student=request.user)
     # Retrieve the next scheduled appointment for the logged-in student
     next_appointment = (
         Appointment.objects
@@ -39,10 +40,25 @@ def student_dashboard(request):
     # Retrieve all lesson packages linked to the student
     lesson_packages = LessonPackage.objects.filter(student=request.user)
 
+    # ➔ Chercher le premier forfait en cours (progression < 100%)
+    forfait_en_cours = None
+    for package in lesson_packages:
+        if package.total_hours > 0:
+            progression = (package.used_hours / package.total_hours) * 100
+            if progression < 100:
+                forfait_en_cours = {
+                    'package': package,
+                    'heures_achetees': package.total_hours,
+                    'heures_utilisees': package.used_hours,
+                    'progression': progression,
+                }
+                break
+
     context = {
         'user': request.user,
         'next_appointment': next_appointment,
         'lesson_packages': lesson_packages,
+        'forfait_en_cours': forfait_en_cours,  # Ajout de l'avancement
     }
     return render(request, 'dashboard_student.html', context)
 
