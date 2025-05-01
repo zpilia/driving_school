@@ -54,7 +54,6 @@ def student_dashboard(request):
                 }
                 break
 
-
     context = {
         'user': request.user,
         'next_appointment': next_appointment,

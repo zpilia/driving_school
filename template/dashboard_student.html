@@ -56,6 +56,14 @@
         <a href="{% url 'schedule' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
           View Full Schedule →
         </a>
+      </div>
+    {% else %}
+      <p class="text-gray-600 italic">
+        No upcoming appointments scheduled.
+      </p>
+    {% endif %}
+  </section>
+
   <!-- Current Lesson Package Progress Section -->
   <section class="mb-10">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">
@@ -104,11 +112,7 @@
           </a>
         </div>
       </div>
-
     {% else %}
-      <p class="text-gray-600 italic">
-        No upcoming appointments scheduled.
-      </p>
       <p class="text-gray-600 italic">
         No lesson package in progress at the moment.
       </p>
