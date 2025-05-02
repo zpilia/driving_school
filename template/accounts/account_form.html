@@ -1,10 +1,18 @@
 {% extends "base.html" %}
-{% block title %}{{ view.object|default:"Create" }} Account{% endblock %}
+{% block title %}{{ view.object|default:"Créer" }} un compte{% endblock %}
 {% block content %}
-  <h1>{{ view.object|default:"Create" }} Account</h1>
+<div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+  <div class="text-center mb-6">
+    <h1 class="text-2xl font-bold">{{ view.object|default:"Créer" }} un compte</h1>
+  </div>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
+    <div>
+      {{ form.as_p }}
+    </div>
+    <div class="text-center mt-4">
+      <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-700 transition duration-200">Sauvegarder</button>
+    </div>
   </form>
+</div>
 {% endblock %}
