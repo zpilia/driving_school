@@ -57,6 +57,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'my_driving_school.urls'
 LOGIN_REDIRECT_URL = '/accounts/dashboard/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 TEMPLATES = [
     {

@@ -36,7 +36,14 @@
                         <li><a href="{% url 'lessonpackages:manage' %}">Manage Lesson Hours</a></li>
                         <li><a href="{% url 'appointments:general_schedule' %}">General Schedule</a></li>
                     {% endif %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li>
+                      <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-600 hover:underline">
+                          Logout
+                        </button>
+                      </form>
+                    </li>
                 {% else %}
                     <li><a href="{% url 'login' %}">Login</a></li>
                 {% endif %}

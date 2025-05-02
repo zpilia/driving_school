@@ -4,20 +4,57 @@
     {% load static %}
     <meta charset="UTF-8">
     <title>Connexion</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}"></head>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
 <body>
+    <!-- Toast de notification (succès) -->
+    {% if messages %}
+      <div class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+        {% for message in messages %}
+          <div class="toast {{ message.tags }}"
+               style="display: flex; align-items: center; background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); min-width: 300px; max-width: 400px; font-size: 0.875rem; transition: opacity 0.4s ease;">
+
+            <!-- Message -->
+            <div style="flex: 1;">{{ message }}</div>
+
+            <!-- Bouton de fermeture -->
+            <button onclick="this.parentElement.remove()"
+                    style="margin-left: auto; background: none; border: none; color: #065f46; font-size: 1rem; padding: 0.25rem; cursor: pointer;">
+              ×
+            </button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Container login -->
     <div class="login-container">
         <h1>Connexion</h1>
+
         {% if form.errors %}
         <div class="error">
             <p>Les identifiants fournis sont invalides. Veuillez réessayer.</p>
         </div>
         {% endif %}
+
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Se connecter</button>
         </form>
     </div>
+
+    <!-- Script toast -->
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".toast").forEach((toast) => {
+          setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 500);
+          }, 3000);
+        });
+      });
+    </script>
 </body>
 </html>
