@@ -1,9 +1,22 @@
 {% extends "base.html" %}
-{% block title %}{{ view.object|default:"Créer" }} un compte{% endblock %}
+{% block title %}
+  {% if view.object %}
+    Modifier le compte de {{ view.object.first_name }} {{ view.object.last_name }}
+  {% else %}
+    Créer un compte
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
   <div class="text-center mb-6">
-    <h1 class="text-2xl font-bold">{{ view.object|default:"Créer" }} un compte</h1>
+    <h1 class="text-2xl font-bold">
+      {% if view.object %}
+        Modifier le compte de {{ view.object.first_name }} {{ view.object.last_name }}
+      {% else %}
+        Créer un compte
+      {% endif %}
+    </h1>
   </div>
   <form method="post">
     {% csrf_token %}
