@@ -21,6 +21,7 @@ from django.utils.encoding import force_bytes
 from django.urls import reverse
 from django.conf import settings
 from django.db.models import Q
+from django.core.mail import EmailMultiAlternatives
 
 # -------------------------------
 # DASHBOARD VIEWS PAR ROLE
