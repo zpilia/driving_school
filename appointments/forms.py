@@ -16,3 +16,14 @@ class AppointmentRequestForm(forms.ModelForm):
             'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-input'}),
             'location': forms.TextInput(attrs={'class': 'form-input'}),
         }
+
+class AppointmentRequestUpdateForm(forms.ModelForm):
+    class Meta:
+        model = AppointmentRequest
+        fields = ['date', 'time', 'location', 'status']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
+            'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-input'}),
+            'location': forms.TextInput(attrs={'class': 'form-input'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+        }

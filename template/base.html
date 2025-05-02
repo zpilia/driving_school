@@ -10,16 +10,34 @@
 
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
 
+    <!-- ✅ Toast messages -->
+    {% if messages %}
+      <div class="fixed top-4 right-4 z-50 space-y-2">
+        {% for message in messages %}
+          <div class="flex items-center max-w-xs p-4 text-sm rounded shadow-lg
+                      {% if message.tags == 'success' %}text-green-700 bg-green-100
+                      {% elif message.tags == 'warning' %}text-yellow-700 bg-yellow-100
+                      {% elif message.tags == 'error' %}text-red-700 bg-red-100
+                      {% else %}text-gray-700 bg-white{% endif %}">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.remove()" class="ml-auto pl-3 font-bold text-lg leading-none">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+      <script>
+        setTimeout(() => {
+          document.querySelectorAll('.z-50').forEach(el => el.remove());
+        }, 3000);
+      </script>
+    {% endif %}
+
     <!-- Header Navigation -->
     <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-
-        <!-- Logo -->
         <div class="text-xl font-bold text-blue-700">
           <a href="{% url 'home' %}">Auto-école</a>
         </div>
 
-        <!-- Navigation Links -->
         <nav>
           <ul class="flex flex-wrap items-center space-x-6 text-sm text-gray-700 font-medium">
             {% if user.is_authenticated %}
@@ -30,12 +48,12 @@
                 <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">My Schedule</a></li>
                 <li><a href="{% url 'lessonpackages:list' %}" class="hover:text-blue-600">My Packages</a></li>
                 <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-blue-600">Progress</a></li>
-                <li><a href="{% url 'appointments:request_appointment' %}" class="hover:text-blue-600">Request Appointment</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Appointments</a></li>
+
               {% elif user.role == 'instructor' %}
                 <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
                 <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">My Schedule</a></li>
                 <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Appointments</a></li>
-                <li><a href="{% url 'accounts:student_list' %}" class="hover:text-blue-600">Student Files</a></li>
 
               {% elif user.role == 'secretary' %}
                 <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
