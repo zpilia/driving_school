@@ -191,6 +191,52 @@ class AccountCreateView(LoginRequiredMixin, CreateView):
     template_name = 'accounts/account_form.html'
     success_url = reverse_lazy('accounts:account_list')
 
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.set_unusable_password()
+        user.save()
+
+        token = default_token_generator.make_token(user)
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+
+        reset_url = self.request.build_absolute_uri(
+            reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+        )
+
+        subject = "Activation de votre compte - Auto-école"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [user.email]
+
+        text_content = f"""
+        Bonjour {user.first_name},
+
+        Un compte a été créé pour vous sur notre plateforme.
+
+        Veuillez cliquer sur le lien suivant pour définir votre mot de passe :
+        {reset_url}
+
+        Merci,
+        L'équipe de l'auto-école
+        """
+
+        html_content = f"""
+        <p>Bonjour {user.first_name},</p>
+        <p>Un compte a été créé pour vous sur notre plateforme.</p>
+        <p><a href="{reset_url}">Cliquez ici pour définir votre mot de passe</a></p>
+        <p>Merci,<br>L'équipe de l'auto-école</p>
+        """
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+        msg.attach_alternative(html_content, "text/html")
+        try:
+            msg.send()
+            print(f"Email envoyé à {user.email}")
+        except Exception as e:
+            print(f"Erreur lors de l'envoi de l'email : {e}")
+
+        return super().form_valid(form)
+
+
 @method_decorator(secretary_or_admin_required, name='dispatch')
 class AccountUpdateView(LoginRequiredMixin, UpdateView):
     model = CustomUser
