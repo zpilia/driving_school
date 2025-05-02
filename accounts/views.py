@@ -155,10 +155,9 @@ class AccountListView(LoginRequiredMixin, ListView):
         queryset = CustomUser.objects.filter(role__in=['student', 'instructor'])
 
         search = self.request.GET.get('search', '')
-        roles = self.request.GET.getlist('role')  # Liste des rôles sélectionnés
-        is_active = self.request.GET.get('is_active')  # Valeur pour le filtre 'actif'
+        roles = self.request.GET.getlist('role')
+        is_active = self.request.GET.get('is_active')
 
-        # Filtrage par recherche (nom, prénom, email, etc.)
         if search:
             queryset = queryset.filter(
                 Q(username__icontains=search) |
@@ -249,6 +248,43 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
     model = CustomUser
     template_name = 'accounts/account_confirm_delete.html'
     success_url = reverse_lazy('accounts:account_list')
+
+    def form_valid(self, form):
+        user = self.get_object()
+
+        subject = "Suppression de votre compte - Auto-école"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [user.email]
+
+        text_content = f"""
+        Bonjour {user.first_name},
+
+        Votre compte a été supprimé sur notre plateforme.
+
+        Si vous avez des questions, n'hésitez pas à nous contacter.
+
+        Merci,
+        L'équipe de l'auto-école
+        """
+
+        html_content = f"""
+        <p>Bonjour {user.first_name},</p>
+        <p>Votre compte a été supprimé sur notre plateforme.</p>
+        <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+        <p>Merci,<br>L'équipe de l'auto-école</p>
+        """
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+        msg.attach_alternative(html_content, "text/html")
+        try:
+            msg.send()
+            print(f"Email envoyé à {user.email}")
+        except Exception as e:
+            print(f"Erreur lors de l'envoi de l'email : {e}")
+
+        user.delete()
+
+        return super().form_valid(form)
 
 # -------------------------------
 # VUES STUB POUR LA GESTION DES COMPTES
