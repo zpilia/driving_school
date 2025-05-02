@@ -5,6 +5,24 @@
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+  <!-- Toast de notification -->
+  {% if messages %}
+    <div class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+      {% for message in messages %}
+        <div class="toast {{ message.tags }}"
+             style="display: flex; align-items: center; background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); min-width: 300px; max-width: 400px; font-size: 0.875rem; transition: opacity 0.4s ease;">
+
+          <div style="flex: 1;">{{ message }}</div>
+
+          <button onclick="this.parentElement.remove()"
+                  style="margin-left: auto; background: none; border: none; color: #065f46; font-size: 1rem; padding: 0.25rem; cursor: pointer;">
+            ×
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <h1 class="text-3xl font-bold text-blue-800 mb-6">
     Welcome, {{ user.get_full_name|default:user.username }} (Student)
   </h1>
@@ -50,18 +68,18 @@
           </tbody>
         </table>
       </div>
-
-      <!-- Button to View Full Schedule -->
-      <div class="mt-6 text-center">
-        <a href="{% url 'schedule' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
-          View Full Schedule →
-        </a>
-      </div>
     {% else %}
       <p class="text-gray-600 italic">
         No upcoming appointments scheduled.
       </p>
     {% endif %}
+
+    <!-- Button to View Full Schedule -->
+    <div class="mt-6 text-center">
+      <a href="{% url 'schedule' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
+        View Full Schedule →
+      </a>
+    </div>
   </section>
 
   <!-- Current Lesson Package Progress Section -->
@@ -118,6 +136,17 @@
       </p>
     {% endif %}
   </section>
-
 </div>
+
+<!-- Script Toast -->
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".toast").forEach((toast) => {
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 500);
+      }, 3000);
+    });
+  });
+</script>
 {% endblock %}
