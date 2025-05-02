@@ -8,56 +8,86 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 
-<body class="bg-gray-100 text-gray-900">
-    <header>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+
+        <!-- Logo -->
+        <div class="text-xl font-bold text-blue-700">
+          <a href="{% url 'home' %}">Auto-école</a>
+        </div>
+
+        <!-- Navigation Links -->
         <nav>
-            <ul>
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
-                    {% if user.role == 'student' %}
-                        <li><a href="{% url 'accounts:dashboard' %}">Student Dashboard</a></li>
-                        <li><a href="{% url 'schedule' %}">My Schedule</a></li>
-                        <li><a href="{% url 'lessonpackages:list' %}">My Lesson Packages</a></li>
-                        <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}">Lesson Progress</a></li>
-                    {% elif user.role == 'instructor' %}
-                        <li><a href="{% url 'accounts:dashboard' %}">Instructor Dashboard</a></li>
-                        <li><a href="{% url 'schedule' %}">My Schedule</a></li>
-                        <li><a href="{% url 'appointments:list' %}">Manage Appointments</a></li>
-                        <li><a href="{% url 'accounts:student_list' %}">Student Files</a></li>
-                    {% elif user.role == 'secretary' %}
-                        <li><a href="{% url 'accounts:dashboard' %}">Secretary Dashboard</a></li>
-                        <li><a href="{% url 'accounts:account_list' %}">Manage Student/Instructor Accounts</a></li>
-                        <li><a href="{% url 'lessonpackages:manage' %}">Add Lesson Hours</a></li>
-                        <li><a href="{% url 'appointments:general_schedule' %}">General Schedule</a></li>
-                    {% elif user.role == 'admin' %}
-                        <li><a href="{% url 'accounts:dashboard' %}">Admin Dashboard</a></li>
-                        <li><a href="{% url 'accounts:account_list' %}">Manage Student/Instructor Accounts</a></li>
-                        <li><a href="{% url 'accounts:manage_secretaries' %}">Manage Secretary Accounts</a></li>
-                        <li><a href="{% url 'lessonpackages:manage' %}">Manage Lesson Hours</a></li>
-                        <li><a href="{% url 'appointments:general_schedule' %}">General Schedule</a></li>
-                    {% endif %}
-                    <li>
-                      <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="text-red-600 hover:underline">
-                          Logout
-                        </button>
-                      </form>
-                    </li>
-                {% else %}
-                    <li><a href="{% url 'login' %}">Login</a></li>
-                {% endif %}
-            </ul>
+          <ul class="flex flex-wrap items-center space-x-6 text-sm text-gray-700 font-medium">
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'accounts:profile' %}" class="hover:text-blue-600">Profile</a></li>
+
+              {% if user.role == 'student' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
+                <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">My Schedule</a></li>
+                <li><a href="{% url 'lessonpackages:list' %}" class="hover:text-blue-600">My Packages</a></li>
+                <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-blue-600">Progress</a></li>
+
+              {% elif user.role == 'instructor' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
+                <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">My Schedule</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Appointments</a></li>
+                <li><a href="{% url 'accounts:student_list' %}" class="hover:text-blue-600">Student Files</a></li>
+
+              {% elif user.role == 'secretary' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Manage Accounts</a></li>
+                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Add Hours</a></li>
+                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Schedule</a></li>
+
+              {% elif user.role == 'admin' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Manage Accounts</a></li>
+                <li><a href="{% url 'accounts:manage_secretaries' %}" class="hover:text-blue-600">Secretaries</a></li>
+                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Lesson Hours</a></li>
+                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Schedule</a></li>
+              {% endif %}
+
+              <li>
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="flex items-center gap-1 text-red-600 hover:text-red-800 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9"></path>
+                    </svg>
+                  </button>
+                </form>
+              </li>
+
+            {% else %}
+              <li>
+                <a href="{% url 'login' %}" class="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9"></path>
+                    </svg>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
         </nav>
+      </div>
     </header>
 
-    <main class="p-4">
+    <!-- Main content block -->
+    <main class="p-4 flex-grow">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="text-center py-6 text-sm text-gray-500">
-        <p>&copy; Auto-école</p>
+    <!-- Footer fixé en bas -->
+    <footer class="bg-white shadow-inner">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-500">
+        &copy; {% now "Y" %} Auto-école. All rights reserved.
+      </div>
     </footer>
+
 </body>
 </html>
