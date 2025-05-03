@@ -104,6 +104,12 @@
                    class="text-red-700 hover:text-red-800 ml-3 inline-flex items-center justify-center">
                    🗑️ Supprimer
                 </a>
+                 {% if account.role == 'student' %}
+                  <a href=""
+                     class="text-green-700 hover:text-green-800 ml-3 inline-flex items-center justify-center">
+                     ➕ Heures
+                  </a>
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
