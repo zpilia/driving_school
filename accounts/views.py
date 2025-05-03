@@ -22,6 +22,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.db.models import Q
 from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import get_object_or_404
 
 # -------------------------------
 # DASHBOARD VIEWS PAR ROLE
@@ -285,6 +286,23 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
         user.delete()
 
         return super().form_valid(form)
+
+
+@login_required
+@role_required(['secretary', 'admin'])
+def student_infos(request, pk):
+    student = get_object_or_404(CustomUser, pk=pk, role='student')
+    appointments = Appointment.objects.filter(student=student)
+    lesson_package = LessonPackage.objects.filter(student=student).first()
+
+    context = {
+        'student': student,
+        'appointments': appointments,
+        'lesson_package': lesson_package,
+    }
+
+    return render(request, 'profiles/student_infos.html', context)
+
 
 # -------------------------------
 # VUES STUB POUR LA GESTION DES COMPTES
