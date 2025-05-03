@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Fiche Étudiant{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl font-bold text-blue-800 mb-4">
+    Fiche de l'étudiant : {{ student.first_name }} {{ student.last_name }}
+  </h1>
+
+  <section class="bg-white shadow-md rounded-lg p-6 mb-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Informations de l'utilisateur</h2>
+    <p><strong class="text-blue-600">Nom d'utilisateur :</strong> {{ student.username }}</p>
+    <p><strong class="text-blue-600">Nom :</strong> {{ student.last_name }}</p>
+    <p><strong class="text-blue-600">Prénom :</strong> {{ student.first_name }}</p>
+    <p><strong class="text-blue-600">Email :</strong> {{ student.email }}</p>
+    <p><strong class="text-blue-600">Inscrit le :</strong> {{ student.date_joined|date:"d/m/Y" }}</p>
+  </section>
+
+  <section class="bg-white shadow-md rounded-lg p-6 mb-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Rendez-vous</h2>
+    {% if appointments %}
+      <ul class="list-disc pl-5 space-y-2">
+        {% for app in appointments %}
+          <li>{{ app.date }} à {{ app.time }} - {{ app.location }} (Instructeur : {{ app.instructor.username }})</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Aucun rendez-vous programmé.</p>
+    {% endif %}
+  </section>
+
+  <section class="bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Forfait de cours</h2>
+    {% if lesson_package %}
+      <p><strong class="text-blue-600">Total :</strong> {{ lesson_package.total_hours }} heures</p>
+      <p><strong class="text-orange-600">Utilisées :</strong> {{ lesson_package.used_hours }} heures</p>
+      <p><strong class="text-green-600">Restantes :</strong> {{ lesson_package.remaining_hours }} heures</p>
+      <p><strong class="text-red-600">À payer :</strong> {{ lesson_package.unpaid_hours }} heures</p>
+    {% else %}
+      <p>Aucun forfait trouvé.</p>
+    {% endif %}
+  </section>
+  <a href="{% url 'lessonpackages:add_hours' student.pk %}"
+       class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition mb-4">
+      ➕ Ajouter des heures
+    </a>
+{% endblock %}
+

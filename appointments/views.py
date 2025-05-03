@@ -7,9 +7,13 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import AppointmentRequest
-from .forms import AppointmentRequestForm, AppointmentRequestUpdateForm
+from .forms import AppointmentRequestForm, AppointmentRequestUpdateForm, AppointmentForm
 
 from .models import Appointment
+from accounts.decorators import role_required
+from django.views.generic import DeleteView
+from lessonpackages.models import LessonPackage
+
 
 class GeneralScheduleView(TemplateView):
     template_name = 'appointments/general_schedule.html'
@@ -90,3 +94,67 @@ class AppointmentRequestListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return AppointmentRequest.objects.filter(instructor=self.request.user)
+
+
+
+@method_decorator(role_required(['secretary', 'admin']), name='dispatch')
+class AppointmentCreateView(LoginRequiredMixin, CreateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = 'appointments/appointment_form.html'
+    success_url = reverse_lazy('appointments:manage')
+
+    def form_valid(self, form):
+        student = form.cleaned_data['student']
+
+        lesson_package = LessonPackage.objects.filter(student=student).first()
+
+        if lesson_package and lesson_package.paid_hours > lesson_package.used_hours:
+            messages.success(self.request, "Rendez-vous créé avec succès.")
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, "Cet étudiant n'a pas d'heures payées disponibles.")
+            return self.form_invalid(form)
+
+
+@method_decorator(role_required(['secretary', 'admin']), name='dispatch')
+class AppointmentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = 'appointments/appointment_form.html'
+    success_url = reverse_lazy('appointments:manage')
+
+    def form_valid(self, form):
+        student = form.cleaned_data['student']
+
+        lesson_package = LessonPackage.objects.filter(student=student).first()
+
+        if lesson_package and lesson_package.paid_hours > lesson_package.used_hours:
+            messages.success(self.request, "Rendez-vous modifié avec succès.")
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, "Cet étudiant n'a pas d'heures payées disponibles.")
+            return self.form_invalid(form)
+
+@method_decorator(role_required(['secretary', 'admin']), name='dispatch')
+class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Appointment
+    template_name = 'appointments/appointment_confirm_delete.html'
+    success_url = reverse_lazy('appointments:manage')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Rendez-vous supprimé avec succès.")
+        return super().delete(request, *args, **kwargs)
+
+@method_decorator(role_required(['secretary', 'admin']), name='dispatch')
+class AppointmentView(LoginRequiredMixin, ListView):
+    model = Appointment
+    template_name = 'appointments/manage.html'
+    context_object_name = 'appointments'
+
+    def get_queryset(self):
+        return Appointment.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
