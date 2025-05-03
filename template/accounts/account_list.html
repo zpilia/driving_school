@@ -109,7 +109,7 @@
                    🗑️ Supprimer
                 </a>
                  {% if account.role == 'student' %}
-                  <a href=""
+                  <a href="{% url 'lessonpackages:add_hours' account.pk %}"
                      class="text-green-700 hover:text-green-800 ml-3 inline-flex items-center justify-center">
                      ➕ Heures
                   </a>
