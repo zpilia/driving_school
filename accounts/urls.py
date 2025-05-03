@@ -13,7 +13,8 @@ from .views import (
     AccountCreateView,
     AccountUpdateView,
     AccountDeleteView,
-    create_account_and_send_email
+    create_account_and_send_email,
+    student_infos
 )
 
 urlpatterns = [
@@ -30,4 +31,4 @@ urlpatterns = [
     path('manage_accounts/<int:pk>/delete/', AccountDeleteView.as_view(), name='account_delete'),
     path('manage_secretaries/', manage_secretaries_view, name='manage_secretaries'),
     path('create_account_email/', create_account_and_send_email, name='create_account_email'),
-]
+    path('students/<int:pk>/infos/', student_infos, name='student_infos'),]
