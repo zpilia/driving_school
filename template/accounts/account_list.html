@@ -75,8 +75,12 @@
         <tbody class="bg-white divide-y divide-gray-200">
           {% for account in accounts %}
             <tr class="hover:bg-gray-50 transition">
-              <td class="px-6 py-4 text-sm text-blue-600 hover:underline">
-                <a href="{% url 'accounts:student_infos' account.pk %}">{{ account.username }}</a>
+              <td class="px-6 py-4 text-sm">
+                {% if account.role == 'student' %}
+                  <a href="{% url 'accounts:student_infos' account.pk %}">{{ account.username }}</a>
+                {% else %}
+                  {{ account.username }}
+                {% endif %}
               </td>
               <td class="px-6 py-4 text-sm text-gray-900">{{ account.last_name }}</td>
               <td class="px-6 py-4 text-sm text-gray-900">{{ account.first_name }}</td>
