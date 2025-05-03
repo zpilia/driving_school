@@ -1,19 +1,125 @@
 {% extends "base.html" %}
-{% block title %}Manage Accounts{% endblock %}
+
+{% block title %}Gestion des comptes{% endblock %}
+
 {% block content %}
-  <h1>Manage Student and Instructor Accounts</h1>
-  <p><a href="{% url 'accounts:account_create' %}">Create New Account</a></p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-3xl font-bold text-blue-800 mb-6">Gestion des comptes</h1>
+
+  <form method="get" class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex-1">
+      <label for="search" class="block text-sm font-medium text-gray-700">Recherche par nom, prénom ou email</label>
+      <input type="text" name="search" id="search" value="{{ search }}"
+             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-red-500 focus:border-red-500"
+             onkeyup="this.form.submit()">
+    </div>
+
+    <div class="flex flex-wrap gap-4">
+      <div class="flex flex-col items-start">
+        <label class="text-sm font-medium text-gray-700">Rôle</label>
+        <div class="flex items-center">
+          <input type="checkbox" name="role" value="student"
+                 {% if 'student' in selected_roles %}checked{% endif %}
+                 class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+          <span class="ml-2 text-sm text-gray-700">Étudiant</span>
+        </div>
+        <div class="flex items-center">
+          <input type="checkbox" name="role" value="instructor"
+                 {% if 'instructor' in selected_roles %}checked{% endif %}
+                 class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+          <span class="ml-2 text-sm text-gray-700">Instructeur</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-start">
+        <label class="text-sm font-medium text-gray-700">État</label>
+        <div class="flex items-center">
+          <input type="checkbox" name="is_active" value="1"
+                 {% if is_active == '1' %}checked{% endif %}
+                 class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+          <span class="ml-2 text-sm text-gray-700">Actif</span>
+        </div>
+        <div class="flex items-center">
+          <input type="checkbox" name="is_active" value="0"
+                 {% if is_active == '0' %}checked{% endif %}
+                 class="h-4 w-4 text-gray-500 focus:ring-gray-500 border-gray-300 rounded">
+          <span class="ml-2 text-sm text-gray-700">Inactif</span>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="mb-6">
+    <a href="{% url 'accounts:account_create' %}"
+       class="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+      ➕ Créer un nouveau compte
+    </a>
+  </div>
+
   {% if accounts %}
-    <ul>
-      {% for account in accounts %}
-        <li>
-          {{ account.username }} ({{ account.role }}) - {{ account.email }}
-          <a href="{% url 'accounts:account_update' account.pk %}">Edit</a>
-          <a href="{% url 'accounts:account_delete' account.pk %}">Delete</a>
-        </li>
-      {% endfor %}
-    </ul>
+    <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
+      <table class="min-w-full table-auto divide-y divide-gray-200">
+        <thead class="bg-red-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom d'utilisateur</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prénom</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date d'inscription</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actif</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rôle</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dernière connexion</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for account in accounts %}
+            <tr class="hover:bg-gray-50 transition">
+              <td class="px-6 py-4 text-sm text-gray-900">{{ account.username }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ account.last_name }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ account.first_name }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ account.email }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ account.date_joined|date:"d/m/Y" }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                {% if account.is_active %}
+                  <span class="text-green-600">✅</span>
+                {% else %}
+                  <span class="text-red-600">❌</span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                  {% if account.role == 'student' %}
+                      Étudiant
+                  {% elif account.role == 'instructor' %}
+                      Instructeur
+                  {% endif %}
+            </td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ account.last_login|date:"d/m/Y H:i" }}</td>
+              <td class="px-6 py-4 text-sm text-right">
+                <a href="{% url 'accounts:account_update' account.pk %}"
+                   class="text-blue-700 hover:text-blue-800">✏️ Modifier</a>
+                <a href="{% url 'accounts:account_delete' account.pk %}"
+                   class="text-red-700 hover:text-red-800 ml-3 inline-flex items-center justify-center">
+                   🗑️ Supprimer
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% else %}
-    <p>No accounts found.</p>
+    <p class="text-center text-gray-500 mt-8">Aucun compte trouvé.</p>
   {% endif %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+    form.addEventListener('change', function () {
+      form.submit();
+    });
+  });
+</script>
+
 {% endblock %}

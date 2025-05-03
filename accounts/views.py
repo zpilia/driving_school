@@ -20,6 +20,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 from django.conf import settings
+from django.db.models import Q
+from django.core.mail import EmailMultiAlternatives
 
 # -------------------------------
 # DASHBOARD VIEWS PAR ROLE
@@ -150,8 +152,36 @@ class AccountListView(LoginRequiredMixin, ListView):
     template_name = 'accounts/account_list.html'
     context_object_name = 'accounts'
     def get_queryset(self):
-        # Liste seulement les étudiants et instructeurs pour la gestion
-        return CustomUser.objects.filter(role__in=['student', 'instructor'])
+        queryset = CustomUser.objects.filter(role__in=['student', 'instructor'])
+
+        search = self.request.GET.get('search', '')
+        roles = self.request.GET.getlist('role')
+        is_active = self.request.GET.get('is_active')
+
+        if search:
+            queryset = queryset.filter(
+                Q(username__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)
+            )
+
+        if roles:
+            queryset = queryset.filter(role__in=roles)
+
+        if is_active == '1':
+            queryset = queryset.filter(is_active=True)
+        elif is_active == '0':
+            queryset = queryset.filter(is_active=False)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected_roles'] = self.request.GET.getlist('role')
+        context['search'] = self.request.GET.get('search', '')
+        context['is_active'] = self.request.GET.get('is_active', '')
+        return context
 
 @method_decorator(secretary_or_admin_required, name='dispatch')
 class AccountCreateView(LoginRequiredMixin, CreateView):
@@ -159,6 +189,52 @@ class AccountCreateView(LoginRequiredMixin, CreateView):
     form_class = CustomUserForm
     template_name = 'accounts/account_form.html'
     success_url = reverse_lazy('accounts:account_list')
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.set_unusable_password()
+        user.save()
+
+        token = default_token_generator.make_token(user)
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+
+        reset_url = self.request.build_absolute_uri(
+            reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+        )
+
+        subject = "Activation de votre compte - Auto-école"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [user.email]
+
+        text_content = f"""
+        Bonjour {user.first_name},
+
+        Un compte a été créé pour vous sur notre plateforme.
+
+        Veuillez cliquer sur le lien suivant pour définir votre mot de passe :
+        {reset_url}
+
+        Merci,
+        L'équipe de l'auto-école
+        """
+
+        html_content = f"""
+        <p>Bonjour {user.first_name},</p>
+        <p>Un compte a été créé pour vous sur notre plateforme.</p>
+        <p><a href="{reset_url}">Cliquez ici pour définir votre mot de passe</a></p>
+        <p>Merci,<br>L'équipe de l'auto-école</p>
+        """
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+        msg.attach_alternative(html_content, "text/html")
+        try:
+            msg.send()
+            print(f"Email envoyé à {user.email}")
+        except Exception as e:
+            print(f"Erreur lors de l'envoi de l'email : {e}")
+
+        return super().form_valid(form)
+
 
 @method_decorator(secretary_or_admin_required, name='dispatch')
 class AccountUpdateView(LoginRequiredMixin, UpdateView):
@@ -172,6 +248,43 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
     model = CustomUser
     template_name = 'accounts/account_confirm_delete.html'
     success_url = reverse_lazy('accounts:account_list')
+
+    def form_valid(self, form):
+        user = self.get_object()
+
+        subject = "Suppression de votre compte - Auto-école"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [user.email]
+
+        text_content = f"""
+        Bonjour {user.first_name},
+
+        Votre compte a été supprimé sur notre plateforme.
+
+        Si vous avez des questions, n'hésitez pas à nous contacter.
+
+        Merci,
+        L'équipe de l'auto-école
+        """
+
+        html_content = f"""
+        <p>Bonjour {user.first_name},</p>
+        <p>Votre compte a été supprimé sur notre plateforme.</p>
+        <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+        <p>Merci,<br>L'équipe de l'auto-école</p>
+        """
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+        msg.attach_alternative(html_content, "text/html")
+        try:
+            msg.send()
+            print(f"Email envoyé à {user.email}")
+        except Exception as e:
+            print(f"Erreur lors de l'envoi de l'email : {e}")
+
+        user.delete()
+
+        return super().form_valid(form)
 
 # -------------------------------
 # VUES STUB POUR LA GESTION DES COMPTES
