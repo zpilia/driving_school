@@ -7,7 +7,9 @@ from .views import (AppointmentListView,
                     AppointmentCreateView,
                     AppointmentUpdateView,
                     AppointmentDeleteView,
-                    AppointmentView
+                    AppointmentView,
+                    weekly_schedule
+
                     )
 from django.views.generic import TemplateView
 
@@ -20,5 +22,6 @@ urlpatterns = [
     path('<int:pk>/edit/', AppointmentUpdateView.as_view(), name='edit_appointment'),
     path('<int:pk>/delete/', AppointmentDeleteView.as_view(), name='delete_appointment'),
     path('manage/', AppointmentView.as_view(), name='manage'),
+    path('weekly/<str:start_date>/', weekly_schedule, name='weekly_schedule'),
 
 ]
