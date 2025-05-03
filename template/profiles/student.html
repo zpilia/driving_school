@@ -1,32 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Student Profile{% endblock %}
+{% block title %}Profil Élève{% endblock %}
 {% block content %}
-  <h1>Welcome, {{ user.username }} (Student)</h1>
-  <section id="schedule">
-    <h2>My Appointments</h2>
-    <!-- Vous pouvez intégrer ici une liste (ou un calendrier) des rendez-vous récupérés via une vue -->
+  <h1>Bienvenue, {{ user.username }} (Élève)</h1>
+
+  <section id="schedule" class="mb-6">
+    <h2 class="text-lg font-semibold mb-2">Mes Rendez-vous</h2>
     {% if appointments %}
-      <ul>
+      <ul class="list-disc pl-6 text-gray-700">
         {% for app in appointments %}
           <li>
-            {{ app.date }} at {{ app.time }} - {{ app.location }} (Instructor: {{ app.instructor.username }})
+            {{ app.date }} à {{ app.time }} – {{ app.location }} (Moniteur : {{ app.instructor.username }})
           </li>
         {% endfor %}
       </ul>
     {% else %}
-      <p>No appointments scheduled.</p>
+      <p class="text-sm text-gray-500">Aucun rendez-vous planifié.</p>
     {% endif %}
   </section>
-  
+
   <section id="lesson_progress">
-    <h2>Lesson Package Progress</h2>
-    <!-- Par exemple, afficher total vs used hours; cette donnée peut provenir d'un modèle LessonPackage -->
+    <h2 class="text-lg font-semibold mb-2">Progression du Forfait</h2>
     {% if lesson_package %}
-      <p>Total Hours: {{ lesson_package.total_hours }}</p>
-      <p>Used Hours: {{ lesson_package.used_hours }}</p>
-      <p>Remaining: {{ lesson_package.remaining_hours }}</p>
+      <p>Heures achetées : {{ lesson_package.total_hours }}</p>
+      <p>Heures utilisées : {{ lesson_package.used_hours }}</p>
+      <p>Heures restantes : {{ lesson_package.remaining_hours }}</p>
     {% else %}
-      <p>No lesson package data available.</p>
+      <p class="text-sm text-gray-500">Aucune donnée de forfait disponible.</p>
     {% endif %}
   </section>
 {% endblock %}

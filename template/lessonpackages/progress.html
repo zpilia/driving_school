@@ -1,37 +1,37 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Lesson Package Progress{% endblock %}
+{% block title %}Progression de Mes Forfaits{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 
-    <h1 class="text-3xl font-bold text-blue-800 text-center mb-8">My Progress</h1>
+    <h1 class="text-3xl font-bold text-blue-800 text-center mb-8">Ma Progression</h1>
 
     {% if progress_data %}
         <div class="space-y-8">
             {% for item in progress_data %}
             <div class="bg-white p-6 rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">
-                    Package #{{ forloop.counter }}
+                    Forfait #{{ forloop.counter }}
 
                     {% if item.progression == 0 %}
                         <span class="ml-2 inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full uppercase font-semibold">
-                            Not Started
+                            Non démarré
                         </span>
                     {% elif item.progression >= 100 %}
                         <span class="ml-2 inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full uppercase font-semibold">
-                            Completed
+                            Terminé
                         </span>
                     {% else %}
                         <span class="ml-2 inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase font-semibold">
-                            In Progress
+                            En cours
                         </span>
                     {% endif %}
                 </h2>
 
                 <p class="text-gray-700 mb-2">
-                    {{ item.heures_utilisees }} h used out of {{ item.heures_achetees }} h purchased
+                    {{ item.heures_utilisees }} h utilisées sur {{ item.heures_achetees }} h achetées
                 </p>
 
                 <div class="w-full bg-gray-200 rounded-full h-6 mb-2 overflow-hidden">
@@ -42,28 +42,28 @@
                 </div>
 
                 <p class="text-sm text-gray-500">
-                    {{ item.progression|floatformat:1 }}% completed
+                    {{ item.progression|floatformat:1 }}% complété
                 </p>
 
                 {% if item.progression >= 100 %}
                     <p class="mt-2 text-red-600 font-semibold">
-                        Warning: this package is fully used or exceeded!
+                        Attention : ce forfait est totalement utilisé ou dépassé !
                     </p>
                 {% endif %}
             </div>
             {% endfor %}
         </div>
     {% else %}
-        <p class="text-center text-gray-500 mt-8">No lesson package found.</p>
+        <p class="text-center text-gray-500 mt-8">Aucun forfait trouvé.</p>
     {% endif %}
 
-    <!-- Back to Home Button -->
+    <!-- Bouton Retour -->
     <div class="mt-12 text-center">
         <a href="{% url 'home' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
             </svg>
-            Back to Home
+            Retour à l'accueil
         </a>
     </div>
 

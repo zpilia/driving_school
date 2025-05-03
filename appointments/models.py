@@ -3,9 +3,9 @@ from django.conf import settings
 
 class Appointment(models.Model):
     STATUS_CHOICES = [
-        ('scheduled', 'Scheduled'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled'),
+        ('scheduled', 'Prévu'),
+        ('completed', 'Terminé'),
+        ('cancelled', 'Annulé'),
     ]
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -21,16 +21,17 @@ class Appointment(models.Model):
     time = models.TimeField()
     location = models.CharField(max_length=100)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='scheduled')
-    
+
     def __str__(self):
         return f"Rendez-vous le {self.date} à {self.time} entre {self.student} et {self.instructor}"
 
+
 class AppointmentRequest(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('accepted', 'Accepted'),
-        ('refused', 'Refused'),
-        ('proposed', 'Proposed by Instructor')
+        ('pending', 'En attente'),
+        ('accepted', 'Acceptée'),
+        ('refused', 'Refusée'),
+        ('proposed', 'Proposition de l’instructeur'),
     ]
 
     student = models.ForeignKey(

@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Tableau de bord Admin{% endblock %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <h1 class="text-3xl font-bold text-blue-800 mb-8">
-    Welcome, {{ user.get_full_name|default:user.username }} (Admin)
+    Bienvenue, {{ user.get_full_name|default:user.username }} (Administrateur)
   </h1>
 
-  <!-- Manage Students -->
+  <!-- Gestion des étudiants -->
   <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">👨‍🎓 Students</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">👨‍🎓 Étudiants</h2>
     {% if students %}
       <ul class="space-y-2">
         {% for student in students %}
@@ -17,13 +17,13 @@
         {% endfor %}
       </ul>
     {% else %}
-      <p class="text-gray-600 italic">No students found.</p>
+      <p class="text-gray-600 italic">Aucun étudiant trouvé.</p>
     {% endif %}
   </div>
 
-  <!-- Manage Instructors -->
+  <!-- Gestion des instructeurs -->
   <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">🧑‍🏫 Instructors</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">🧑‍🏫 Moniteurs</h2>
     {% if instructors %}
       <ul class="space-y-2">
         {% for instructor in instructors %}
@@ -31,13 +31,13 @@
         {% endfor %}
       </ul>
     {% else %}
-      <p class="text-gray-600 italic">No instructors found.</p>
+      <p class="text-gray-600 italic">Aucun moniteur trouvé.</p>
     {% endif %}
   </div>
 
-  <!-- Manage Secretaries -->
+  <!-- Gestion des secrétaires -->
   <div class="bg-white p-6 rounded-lg shadow-md">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 Secretaries</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 Secrétaires</h2>
     {% if secretaries %}
       <ul class="space-y-2">
         {% for sec in secretaries %}
@@ -45,7 +45,7 @@
         {% endfor %}
       </ul>
     {% else %}
-      <p class="text-gray-600 italic">No secretaries found.</p>
+      <p class="text-gray-600 italic">Aucune secrétaire trouvée.</p>
     {% endif %}
   </div>
 </div>

@@ -1,28 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Instructor Dashboard{% endblock %}
+{% block title %}Tableau de bord Moniteur{% endblock %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <h1 class="text-3xl font-bold text-blue-800 mb-8">
-    Welcome, {{ user.get_full_name|default:user.username }} (Instructor)
+    Bienvenue, {{ user.get_full_name|default:user.username }} (Moniteur)
   </h1>
 
-  <!-- Appointments Section -->
+  <!-- Section rendez-vous -->
   <div class="bg-white p-6 rounded-lg shadow-md">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">📅 My Appointments</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">📅 Mes rendez-vous</h2>
 
     {% if appointments %}
       <ul class="space-y-2">
         {% for appt in appointments %}
           <li class="text-gray-700">
-            {{ appt.date|date:"d/m/Y" }} at {{ appt.time|time:"H:i" }} with
+            {{ appt.date|date:"d/m/Y" }} à {{ appt.time|time:"H:i" }} avec
             <span class="font-medium">{{ appt.student.get_full_name|default:appt.student.username }}</span>
             ({{ appt.location }})
           </li>
         {% endfor %}
       </ul>
     {% else %}
-      <p class="text-gray-600 italic">No appointments scheduled.</p>
+      <p class="text-gray-600 italic">Aucun rendez-vous programmé.</p>
     {% endif %}
   </div>
 </div>

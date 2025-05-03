@@ -321,11 +321,11 @@ def create_account_and_send_email(request):
             reset_url = request.build_absolute_uri(
                 reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
             )
-            subject = "Activate your account - Set your password"
-            message = f"Hello {user.username},\n\n" \
-                      f"Please click on the link below to set your password and activate your account:\n" \
+            subject = "Activation de votre compte - Définir votre mot de passe"
+            message = f"Bonjour {user.username},\n\n" \
+                      f"Veuillez cliquer sur le lien ci-dessous pour définir votre mot de passe et activer votre compte :\n" \
                       f"{reset_url}\n\n" \
-                      f"Thank you."
+                      f"Merci."
             # Envoyer l'email (Assurez-vous que vos paramètres EMAIL_* sont configurés dans settings.py)
             send_mail(subject, message, 'no-reply@yourdomain.com', [user.email])
             return redirect('accounts:account_list')

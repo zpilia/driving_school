@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% load form_tags %}
-{% block title %}Request Appointment{% endblock %}
+{% block title %}Demande de rendez-vous{% endblock %}
 
 {% block content %}
 <div class="flex items-center justify-center p-12">
   <div class="mx-auto w-full max-w-[550px] bg-white p-8 rounded shadow">
-    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Request an Appointment</h1>
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Demander un rendez-vous</h1>
 
     <form method="post">
       {% csrf_token %}
       {{ form.non_field_errors }}
 
-      <!-- Instructor -->
+      <!-- Instructeur -->
       <div class="mb-5">
         <label for="{{ form.instructor.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
-          Instructor
+          Instructeur
         </label>
         {{ form.instructor|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" }}
         {{ form.instructor.errors }}
@@ -29,36 +29,36 @@
         {{ form.date.errors }}
       </div>
 
-      <!-- Time -->
+      <!-- Heure -->
       <div class="mb-5">
         <label for="{{ form.time.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
-          Time
+          Heure
         </label>
         {{ form.time|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" }}
         {{ form.time.errors }}
       </div>
 
-      <!-- Location -->
+      <!-- Lieu -->
       <div class="mb-5">
         <label for="{{ form.location.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
-          Location
+          Lieu
         </label>
         {{ form.location|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" }}
         {{ form.location.errors }}
       </div>
 
-      <!-- Submit -->
+      <!-- Bouton -->
       <div>
         <button type="submit"
           class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
-          Book Appointment
+          Envoyer la demande
         </button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Toast zone -->
+<!-- Zone de toast -->
 {% if messages %}
   <div class="fixed top-5 right-5 z-50 space-y-2">
     {% for message in messages %}
