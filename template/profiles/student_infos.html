@@ -33,13 +33,14 @@
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Forfait de cours</h2>
     {% if lesson_package %}
       <p><strong class="text-blue-600">Total :</strong> {{ lesson_package.total_hours }} heures</p>
-      <p><strong class="text-blue-600">Utilisées :</strong> {{ lesson_package.used_hours }} heures</p>
-      <p><strong class="text-blue-600">Restantes :</strong> {{ lesson_package.remaining_hours }} heures</p>
+      <p><strong class="text-orange-600">Utilisées :</strong> {{ lesson_package.used_hours }} heures</p>
+      <p><strong class="text-green-600">Restantes :</strong> {{ lesson_package.remaining_hours }} heures</p>
+      <p><strong class="text-red-600">À payer :</strong> {{ lesson_package.unpaid_hours }} heures</p>
     {% else %}
       <p>Aucun forfait trouvé.</p>
     {% endif %}
   </section>
-  <a href=""
+  <a href="{% url 'lessonpackages:add_hours' student.pk %}"
        class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition mb-4">
       ➕ Ajouter des heures
     </a>
