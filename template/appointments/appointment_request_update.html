@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load form_tags %}
+{% block title %}Respond to Request{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center p-12">
+  <div class="mx-auto w-full max-w-[550px] bg-white p-8 rounded shadow">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Respond to Appointment Request</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <!-- Status -->
+      <div class="mb-5">
+        <label for="{{ form.status.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Response
+        </label>
+        {{ form.status|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-blue-500 focus:shadow-md" }}
+        {{ form.status.errors }}
+      </div>
+
+      <!-- Date -->
+      <div class="mb-5">
+        <label for="{{ form.date.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Proposed Date (optional)
+        </label>
+        {{ form.date|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-blue-500 focus:shadow-md" }}
+        {{ form.date.errors }}
+      </div>
+
+      <!-- Time -->
+      <div class="mb-5">
+        <label for="{{ form.time.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Proposed Time (optional)
+        </label>
+        {{ form.time|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-blue-500 focus:shadow-md" }}
+        {{ form.time.errors }}
+      </div>
+
+      <!-- Location -->
+      <div class="mb-5">
+        <label for="{{ form.location.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Proposed Location (optional)
+        </label>
+        {{ form.location|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-blue-500 focus:shadow-md" }}
+        {{ form.location.errors }}
+      </div>
+
+      <button type="submit"
+        class="w-full rounded-md bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 text-base font-semibold">
+        Submit Response
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
