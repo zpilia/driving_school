@@ -55,7 +55,7 @@
 
               {% if user.role == 'student' %}
                 <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
-                <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">Mon planning</a></li>
+                <li><a href="" class="hover:text-blue-600">Mon planning</a></li>
                 <li><a href="{% url 'lessonpackages:list' %}" class="hover:text-blue-600">Mes forfaits</a></li>
                 <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-blue-600">Progression</a></li>
                 <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Mes rendez-vous</a></li>
