@@ -24,7 +24,7 @@
                             Terminé
                         </span>
                     {% else %}
-                        <span class="ml-2 inline-block bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded-full uppercase font-semibold">
+                        <span class="ml-2 inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full uppercase font-semibold">
                             En cours
                         </span>
                     {% endif %}
@@ -34,20 +34,24 @@
                     {{ item.heures_utilisees }} h utilisées sur {{ item.heures_achetees }} h achetées
                 </p>
 
-                <div class="w-full bg-gray-200 rounded-full h-6 mb-2 overflow-hidden">
-                    <div class="h-6 rounded-full transition-all duration-500"
+                <!-- Progression -->
+                <div class="w-full bg-gray-100 rounded-full h-6 mb-2 overflow-hidden shadow-inner">
+                    <div class="h-full transition-all duration-500 text-center text-white text-sm leading-6 font-semibold"
                          style="width: {{ item.progression }}%;
-                                background-color: {% if item.progression < 50 %}#3b82f6{% elif item.progression < 100 %}#f59e0b{% else %}#ef4444{% endif %};">
+                                background-color: {% if item.progression == 0 %}#9ca3af
+                                                  {% elif item.progression < 100 %}#facc15
+                                                  {% else %}#10b981{% endif %};">
+                        {{ item.progression|floatformat:1 }}%
                     </div>
                 </div>
 
-                <p class="text-sm text-gray-500">
-                    {{ item.progression|floatformat:1 }}% complété
-                </p>
-
                 {% if item.progression >= 100 %}
-                    <p class="mt-2 text-red-500 font-semibold">
-                        Attention : ce forfait est totalement utilisé ou dépassé !
+                    <p class="mt-2 text-green-600 font-medium">
+                        ✅ Ce forfait est entièrement utilisé ou terminé.
+                    </p>
+                {% elif item.progression == 0 %}
+                    <p class="mt-2 text-gray-500 italic">
+                        Ce forfait n’a pas encore été utilisé.
                     </p>
                 {% endif %}
             </div>
