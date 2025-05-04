@@ -7,6 +7,8 @@ db.sqlite3
 
 # Environnements
 .env
+venv/
+env/
 
 # Django migrations cache
 */migrations/__pycache__/
