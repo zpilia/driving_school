@@ -14,14 +14,6 @@
         <a href="{% url 'planning:instructor_schedule' instructor.id %}?start_date={{ next_week_date }}" class="text-sky-500 hover:underline">
             Semaine suivante →
         </a>
-        {% if user.role == 'secretary' or user.role == 'admin' %}
-            <a href="{% url 'planning:general_schedule_default' %}" class="text-white bg-sky-500 hover:bg-sky-800 rounded px-4 py-2">
-                Retour au planning général
-            </a>
-        {% endif %}
-         <a href="{% url 'appointments:list' %}" class="text-white bg-sky-500 hover:bg-sky-800 rounded px-4 py-2">
-            Gérer mes rendez-vous
-        </a>
     </div>
 
     <div class="overflow-x-auto shadow-xl rounded-lg border-t-8 border-sky-500 bg-white">
@@ -36,30 +28,42 @@
             </thead>
             <tbody>
                 {% for time in schedule_slots %}
-                <tr class="border-t">
-                    <td class="px-4 py-4 font-medium text-gray-900">{{ time }}</td>
-                    {% for day in week_days %}
-                        {% with day_str=day|stringformat:"s" %}
-                            {% with status=schedule|dict_key:day_str|dict_key:time %}
-                                {% if status == 'pause' %}
-                                    <td class="px-4 py-4 bg-gray-200 text-center text-gray-500 font-semibold">Pause</td>
-                                {% elif status == 'available' %}
-                                    <td class="px-4 py-4 text-center text-green-600 font-semibold">
-                                        Disponible<br>
-                                        <a href="{% url 'appointments:create_appointment' %}?instructor={{ instructor.id }}&date={{ day|date:'Y-m-d' }}&time={{ time }}" class="text-sky-500 text-sm underline">🕒 Ajouter un RDV</a>
-                                    </td>
-                                {% else %}
-                                    <td class="px-4 py-4 text-center text-red-600 font-bold">
-                                        {{ status|safe }}
-                                    </td>
-                                {% endif %}
+                    <tr class="border-t">
+                        <td class="px-4 py-4 font-medium text-gray-900">{{ time }}</td>
+                        {% for day in week_days %}
+                            {% with day_str=day|stringformat:"s" %}
+                                {% with status=schedule|dict_key:day_str|dict_key:time %}
+                                    {% if status == 'pause' %}
+                                        <td class="px-4 py-4 bg-gray-200 text-center text-gray-500 font-semibold">Pause</td>
+                                    {% elif status == 'available' %}
+                                        <td class="px-4 py-4 text-center text-green-600 font-semibold">
+                                            Disponible<br>
+                                            <a href="{% url 'appointments:create_appointment' %}?instructor={{ instructor.id }}&date={{ day|date:'Y-m-d' }}&time={{ time }}" class="text-sky-500 text-sm underline">🕒 Ajouter un RDV</a>
+                                        </td>
+                                    {% else %}
+                                        <td class="px-4 py-4 text-center text-red-600 font-bold">
+                                            {{ status|safe }}
+                                        </td>
+                                    {% endif %}
+                                {% endwith %}
                             {% endwith %}
-                        {% endwith %}
-                    {% endfor %}
-                </tr>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <div class="mt-6 flex flex-wrap justify-end gap-4">
+        {% if user.role == 'secretary' or user.role == 'admin' %}
+            <a href="{% url 'planning:general_schedule_default' %}" class="text-white bg-sky-500 hover:bg-sky-800 rounded px-4 py-2 text-sm">
+                🗓️ Retour au planning général
+            </a>
+        {% endif %}
+        <a href="{% url 'appointments:list' %}" class="text-white bg-sky-500 hover:bg-sky-800 rounded px-4 py-2 text-sm">
+            📋 Gérer mes rendez-vous
+        </a>
+    </div>
+
 </div>
 {% endblock %}
