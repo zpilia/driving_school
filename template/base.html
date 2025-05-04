@@ -51,7 +51,6 @@
         <nav>
           <ul class="flex flex-wrap items-center space-x-6 text-sm text-gray-700 font-medium">
             {% if user.is_authenticated %}
-              <li><a href="{% url 'accounts:profile' %}" class="hover:text-blue-600">Profile</a></li>
 
               {% if user.role == 'student' %}
                 <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
