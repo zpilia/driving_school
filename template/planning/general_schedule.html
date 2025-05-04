@@ -8,9 +8,13 @@
     <div class="mb-6 text-center">
         <span class="font-semibold text-gray-700">Voir le planning d’un moniteur :</span>
         {% for instructor in instructors %}
-            <a href="{% url 'planning:instructor_schedule' instructor.id %}" class="text-sky-500 hover:underline ml-2">
-                {{ instructor.get_full_name }},
-            </a>
+            {% if instructor.id %}
+                <a href="{% url 'planning:instructor_schedule' instructor.id %}" class="text-sky-500 hover:underline ml-2">
+                    {{ instructor.get_full_name }},
+                </a>
+            {% else %}
+                <span class="text-gray-500">Aucun instructeur disponible</span>
+            {% endif %}
         {% endfor %}
     </div>
 
