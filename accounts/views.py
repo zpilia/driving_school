@@ -34,13 +34,13 @@ from django.shortcuts import get_object_or_404
 @login_required
 @role_required(['student'])
 def student_dashboard(request):
-    appointments = Appointment.objects.filter(student=request.user)
-    next_appointment = (
+    appointments = (
         Appointment.objects
-        .filter(student=request.user, status='scheduled')
-        .order_by('date', 'time')
-        .first()
+        .filter(student=request.user, status='scheduled', date__gte=timezone.now().date())
+        .order_by('date', 'time')[:5]
     )
+
+    next_appointment = appointments.first()
 
     lesson_packages = LessonPackage.objects.filter(student=request.user)
 
@@ -59,6 +59,7 @@ def student_dashboard(request):
 
     context = {
         'user': request.user,
+        'appointments': appointments,
         'next_appointment': next_appointment,
         'lesson_packages': lesson_packages,
         'forfait_en_cours': forfait_en_cours,
