@@ -12,7 +12,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-
 class ScheduleListView(ListView):
     model = Appointment
     template_name = 'planning/schedule_list.html'
