@@ -3,8 +3,6 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 py-8">
-  <h1 class="text-2xl font-semibold text-gray-800 mb-6">Rendez-vous et Demandes</h1>
-
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
     <!-- Rendez-vous confirmés -->
@@ -14,9 +12,11 @@
         <ul class="divide-y divide-gray-200">
           {% for appt in appointments %}
             <li class="py-3">
-              <p class="text-gray-700 font-medium">{{ appt.date }} à {{ appt.time }}</p>
+              <p class="text-gray-700 font-medium">Le {{ appt.date|date:"l d F Y"|capfirst }}</p>
+              <p class="text-sm text-gray-500">Heure : {{ appt.time|time:"H:i" }}</p>
               <p class="text-sm text-gray-500">Lieu : {{ appt.location }}</p>
-              <p class="text-sm text-gray-500">Avec :
+              <p class="text-sm text-gray-500">
+                Avec :
                 {% if user.role == 'student' %}
                   {{ appt.instructor.username }}
                 {% else %}
@@ -36,7 +36,15 @@
                     bg-gray-100 text-gray-800
                   {% endif %}
                 ">
-                  {{ appt.status|capfirst }}
+                  {% if appt.status == 'scheduled' %}
+                    Prévu
+                  {% elif appt.status == 'completed' %}
+                    Terminé
+                  {% elif appt.status == 'cancelled' %}
+                    Annulé
+                  {% else %}
+                    Inconnu
+                  {% endif %}
                 </span>
               </p>
             </li>
@@ -54,7 +62,7 @@
         {% if user.role == 'student' %}
           <a href="{% url 'appointments:request_appointment' %}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white p-1.5 rounded-full" title="Créer une demande">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
           </a>
         {% endif %}
@@ -65,16 +73,18 @@
           {% for req in requests %}
             <li class="py-3 flex justify-between items-start">
               <div>
-                <p class="text-gray-700 font-medium">
-                  {% if user.role == 'student' %}
-                    À {{ req.instructor.username }}
-                  {% else %}
-                    De {{ req.student.username }}
-                  {% endif %}
-                  — {{ req.date }} à {{ req.time }}
-                </p>
+                <p class="text-gray-700 font-medium">Le {{ req.date|date:"l d F Y"|capfirst }}</p>
+                <p class="text-sm text-gray-500">Heure : {{ req.time|time:"H:i" }}</p>
                 <p class="text-sm text-gray-500">Lieu : {{ req.location }}</p>
-                <p class="text-sm text-gray-500 mt-1">
+                <p class="text-sm text-gray-500">
+                  Avec :
+                  {% if user.role == 'student' %}
+                    {{ req.instructor.username }}
+                  {% else %}
+                    {{ req.student.username }}
+                  {% endif %}
+                </p>
+                <p class="text-sm mt-1 text-gray-500">
                   Statut :
                   <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full
                     {% if req.status == 'accepted' %}
@@ -89,7 +99,17 @@
                       bg-gray-100 text-gray-800
                     {% endif %}
                   ">
-                    {{ req.status|capfirst }}
+                    {% if req.status == 'accepted' %}
+                      Acceptée
+                    {% elif req.status == 'refused' %}
+                      Refusée
+                    {% elif req.status == 'pending' %}
+                      En attente
+                    {% elif req.status == 'proposed' %}
+                      Proposée
+                    {% else %}
+                      Inconnu
+                    {% endif %}
                   </span>
                 </p>
               </div>
