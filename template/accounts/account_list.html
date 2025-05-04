@@ -99,7 +99,7 @@
                   {% elif account.role == 'instructor' %}
                       Instructeur
                   {% endif %}
-            </td>
+              </td>
               <td class="px-6 py-4 text-sm text-gray-900">{{ account.last_login|date:"d/m/Y H:i" }}</td>
               <td class="px-6 py-4 text-sm text-right">
                 <a href="{% url 'accounts:account_update' account.pk %}"
@@ -133,5 +133,4 @@
     });
   });
 </script>
-
 {% endblock %}

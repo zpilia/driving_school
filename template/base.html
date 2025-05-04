@@ -10,28 +10,38 @@
 
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
 
-    <!-- ✅ Toast messages -->
+    <!-- Zone des messages (toasts) -->
     {% if messages %}
-      <div class="fixed top-4 right-4 z-50 space-y-2">
+      <div class="toast-container">
         {% for message in messages %}
-          <div class="flex items-center max-w-xs p-4 text-sm rounded shadow-lg
-                      {% if message.tags == 'success' %}text-green-700 bg-green-100
-                      {% elif message.tags == 'warning' %}text-yellow-700 bg-yellow-100
-                      {% elif message.tags == 'error' %}text-red-700 bg-red-100
-                      {% else %}text-gray-700 bg-white{% endif %}">
+          <div class="toast
+            {% if message.tags == 'success' %}
+              bg-green-100 border border-green-300 text-green-800
+            {% elif message.tags == 'error' %}
+              bg-red-100 border border-red-300 text-red-800
+            {% elif message.tags == 'warning' %}
+              bg-yellow-100 border border-yellow-300 text-yellow-800
+            {% else %}
+              bg-gray-100 border border-gray-300 text-gray-800
+            {% endif %}
+          ">
             <span>{{ message }}</span>
-            <button onclick="this.parentElement.remove()" class="ml-auto pl-3 font-bold text-lg leading-none">&times;</button>
+            <button onclick="this.parentElement.remove()">&times;</button>
           </div>
         {% endfor %}
       </div>
+
       <script>
         setTimeout(() => {
-          document.querySelectorAll('.z-50').forEach(el => el.remove());
+          document.querySelectorAll('.toast').forEach(toast => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
+          });
         }, 3000);
       </script>
     {% endif %}
 
-    <!-- Header Navigation -->
+    <!-- En-tête / Navigation -->
     <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <div class="text-xl font-bold text-blue-700">
@@ -41,32 +51,32 @@
         <nav>
           <ul class="flex flex-wrap items-center space-x-6 text-sm text-gray-700 font-medium">
             {% if user.is_authenticated %}
-              <li><a href="{% url 'accounts:profile' %}" class="hover:text-blue-600">Profile</a></li>
+              <li><a href="{% url 'accounts:profile' %}" class="hover:text-blue-600">Profil</a></li>
 
               {% if user.role == 'student' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
-                <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">My Schedule</a></li>
-                <li><a href="{% url 'lessonpackages:list' %}" class="hover:text-blue-600">My Packages</a></li>
-                <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-blue-600">Progress</a></li>
-                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Appointments</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
+                <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">Mon planning</a></li>
+                <li><a href="{% url 'lessonpackages:list' %}" class="hover:text-blue-600">Mes forfaits</a></li>
+                <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-blue-600">Progression</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Mes rendez-vous</a></li>
 
               {% elif user.role == 'instructor' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
-                <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">My Schedule</a></li>
-                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Appointments</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
+                <li><a href="{% url 'schedule' %}" class="hover:text-blue-600">Mon planning</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Mes rendez-vous</a></li>
 
               {% elif user.role == 'secretary' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
-                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Manage Accounts</a></li>
-                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Add Hours</a></li>
-                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Schedule</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Gérer les comptes</a></li>
+                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Ajouter des heures</a></li>
+                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Planning général</a></li>
 
               {% elif user.role == 'admin' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
-                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Manage Accounts</a></li>
-                <li><a href="{% url 'accounts:manage_secretaries' %}" class="hover:text-blue-600">Secretaries</a></li>
-                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Lesson Hours</a></li>
-                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Schedule</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Gérer les comptes</a></li>
+                <li><a href="{% url 'accounts:manage_secretaries' %}" class="hover:text-blue-600">Secrétaires</a></li>
+                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Heures de leçon</a></li>
+                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Planning général</a></li>
               {% endif %}
 
               <li>
@@ -94,16 +104,16 @@
       </div>
     </header>
 
-    <!-- Main content block -->
+    <!-- Contenu principal -->
     <main class="p-4 flex-grow">
         {% block content %}
         {% endblock %}
     </main>
 
-    <!-- Footer fixé en bas -->
+    <!-- Pied de page -->
     <footer class="bg-white shadow-inner">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-500">
-        &copy; {% now "Y" %} Auto-école. All rights reserved.
+        &copy; {% now "Y" %} Auto-école. Tous droits réservés.
       </div>
     </footer>
 

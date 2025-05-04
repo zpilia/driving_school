@@ -58,11 +58,11 @@ class AppointmentRequestCreateView(CreateView):
     def form_valid(self, form):
         form.instance.student = self.request.user
         form.instance.status = 'pending'
-        messages.success(self.request, "Your appointment request has been sent successfully.")
+        messages.success(self.request, "Votre demande de rendez-vous a bien été envoyée.")
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "There was an error with your submission. Please check the form.")
+        messages.error(self.request, "Une erreur est survenue. Veuillez vérifier le formulaire.")
         return super().form_invalid(form)
 
 class AppointmentRequestUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -84,7 +84,7 @@ class AppointmentRequestUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upda
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        messages.success(self.request, "Proposition mise à jour avec succès.")
+        messages.success(self.request, "La demande a été mise à jour avec succès.")
         return super().form_valid(form)
 
 class AppointmentRequestListView(LoginRequiredMixin, ListView):
