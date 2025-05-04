@@ -8,24 +8,24 @@
     <div class="mb-6 text-center">
         <span class="font-semibold text-gray-700">Voir le planning d’un moniteur :</span>
         {% for instructor in instructors %}
-            <a href="{% url 'planning:instructor_schedule' instructor.id %}" class="text-blue-600 hover:underline ml-2">
+            <a href="{% url 'planning:instructor_schedule' instructor.id %}" class="text-sky-500 hover:underline ml-2">
                 {{ instructor.get_full_name }},
             </a>
         {% endfor %}
     </div>
 
     <div class="flex justify-between mb-4">
-        <a href="{% url 'planning:general_schedule' start_date=prev_week_date %}" class="text-blue-600 hover:underline">
+        <a href="{% url 'planning:general_schedule' start_date=prev_week_date %}" class="text-sky-500 hover:underline">
             ← Semaine précédente
         </a>
-        <a href="{% url 'planning:general_schedule' start_date=next_week_date %}" class="text-blue-600 hover:underline">
+        <a href="{% url 'planning:general_schedule' start_date=next_week_date %}" class="text-sky-500 hover:underline">
             Semaine suivante →
         </a>
     </div>
 
-    <div class="overflow-x-auto shadow-xl rounded-lg border-t-8 border-blue-600 bg-white">
+    <div class="overflow-x-auto shadow-xl rounded-lg border-t-8 border-sky-500 bg-white">
         <table class="min-w-full text-sm text-gray-800">
-            <thead class="bg-blue-600 text-white">
+            <thead class="bg-sky-500 text-white">
                 <tr>
                     <th class="px-4 py-4 text-left text-lg font-semibold">Heure</th>
                     {% for day in week_days %}
@@ -55,7 +55,7 @@
                                 {% elif status == 'available' %}
                                     <td class="px-4 py-4 text-center text-green-600 font-semibold">
                                         Disponible<br>
-                                        <a href="{% url 'appointments:add_appointment' %}?date={{ day|date:'Y-m-d' }}&time={{ time }}" class="text-blue-600 text-sm underline">🕒 Ajouter un RDV</a>
+                                        <a href="{% url 'appointments:add_appointment' %}?date={{ day|date:'Y-m-d' }}&time={{ time }}" class="text-sky-500 text-sm underline">🕒 Ajouter un RDV</a>
                                     </td>
                                 {% else %}
                                     <td class="px-4 py-4 text-center text-gray-400">-</td>

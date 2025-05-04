@@ -9,11 +9,11 @@
 
   <section class="bg-white shadow-md rounded-lg p-6 mb-6">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Informations de l'utilisateur</h2>
-    <p><strong class="text-blue-600">Nom d'utilisateur :</strong> {{ student.username }}</p>
-    <p><strong class="text-blue-600">Nom :</strong> {{ student.last_name }}</p>
-    <p><strong class="text-blue-600">Prénom :</strong> {{ student.first_name }}</p>
-    <p><strong class="text-blue-600">Email :</strong> {{ student.email }}</p>
-    <p><strong class="text-blue-600">Inscrit le :</strong> {{ student.date_joined|date:"d/m/Y" }}</p>
+    <p><strong class="text-sky-500">Nom d'utilisateur :</strong> {{ student.username }}</p>
+    <p><strong class="text-sky-500">Nom :</strong> {{ student.last_name }}</p>
+    <p><strong class="text-sky-500">Prénom :</strong> {{ student.first_name }}</p>
+    <p><strong class="text-sky-500">Email :</strong> {{ student.email }}</p>
+    <p><strong class="text-sky-500">Inscrit le :</strong> {{ student.date_joined|date:"d/m/Y" }}</p>
   </section>
 
   <section class="bg-white shadow-md rounded-lg p-6 mb-6">
@@ -32,7 +32,7 @@
   <section class="bg-white shadow-md rounded-lg p-6">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Forfait de cours</h2>
     {% if lesson_package %}
-      <p><strong class="text-blue-600">Total :</strong> {{ lesson_package.total_hours }} heures</p>
+      <p><strong class="text-sky-500">Total :</strong> {{ lesson_package.total_hours }} heures</p>
       <p><strong class="text-orange-600">Utilisées :</strong> {{ lesson_package.used_hours }} heures</p>
       <p><strong class="text-green-600">Restantes :</strong> {{ lesson_package.remaining_hours }} heures</p>
       <p><strong class="text-red-600">À payer :</strong> {{ lesson_package.unpaid_hours }} heures</p>

@@ -6,7 +6,7 @@
 {% block content %}
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 
-    <h1 class="text-3xl font-bold text-blue-800 text-center mb-8">Ma Progression</h1>
+    <h1 class="text-3xl font-bold text-sky-600 text-center mb-8">Ma Progression</h1>
 
     {% if progress_data %}
         <div class="space-y-8">
@@ -24,7 +24,7 @@
                             Terminé
                         </span>
                     {% else %}
-                        <span class="ml-2 inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase font-semibold">
+                        <span class="ml-2 inline-block bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded-full uppercase font-semibold">
                             En cours
                         </span>
                     {% endif %}
@@ -46,7 +46,7 @@
                 </p>
 
                 {% if item.progression >= 100 %}
-                    <p class="mt-2 text-red-600 font-semibold">
+                    <p class="mt-2 text-red-500 font-semibold">
                         Attention : ce forfait est totalement utilisé ou dépassé !
                     </p>
                 {% endif %}
@@ -59,7 +59,7 @@
 
     <!-- Bouton Retour -->
     <div class="mt-12 text-center">
-        <a href="{% url 'home' %}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-blue-700 transition">
+        <a href="{% url 'home' %}" class="inline-flex items-center bg-sky-500 text-white px-4 py-2 text-sm font-medium rounded hover:bg-sky-700 transition">
             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
             </svg>

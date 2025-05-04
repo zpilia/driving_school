@@ -8,25 +8,25 @@
     </h1>
 
     <div class="flex justify-between mb-4">
-        <a href="{% url 'planning:instructor_schedule' instructor.id %}?start_date={{ prev_week_date }}" class="text-blue-600 hover:underline">
+        <a href="{% url 'planning:instructor_schedule' instructor.id %}?start_date={{ prev_week_date }}" class="text-sky-600 hover:underline">
             ← Semaine précédente
         </a>
-        <a href="{% url 'planning:instructor_schedule' instructor.id %}?start_date={{ next_week_date }}" class="text-blue-600 hover:underline">
+        <a href="{% url 'planning:instructor_schedule' instructor.id %}?start_date={{ next_week_date }}" class="text-sky-500 hover:underline">
             Semaine suivante →
         </a>
         {% if user.role == 'secretary' or user.role == 'admin' %}
-            <a href="{% url 'planning:general_schedule_default' %}" class="text-white bg-blue-600 hover:bg-blue-800 rounded px-4 py-2">
+            <a href="{% url 'planning:general_schedule_default' %}" class="text-white bg-sky-500 hover:bg-sky-800 rounded px-4 py-2">
                 Retour au planning général
             </a>
         {% endif %}
-         <a href="{% url 'appointments:list' %}" class="text-white bg-blue-600 hover:bg-blue-800 rounded px-4 py-2">
+         <a href="{% url 'appointments:list' %}" class="text-white bg-sky-500 hover:bg-sky-800 rounded px-4 py-2">
             Gérer mes rendez-vous
         </a>
     </div>
 
-    <div class="overflow-x-auto shadow-xl rounded-lg border-t-8 border-blue-600 bg-white">
+    <div class="overflow-x-auto shadow-xl rounded-lg border-t-8 border-sky-500 bg-white">
         <table class="min-w-full text-sm text-gray-800">
-            <thead class="bg-blue-600 text-white">
+            <thead class="bg-sky-500 text-white">
                 <tr>
                     <th class="px-4 py-4 text-left text-lg font-semibold">Heure</th>
                     {% for day in week_days %}
@@ -46,7 +46,7 @@
                                 {% elif status == 'available' %}
                                     <td class="px-4 py-4 text-center text-green-600 font-semibold">
                                         Disponible<br>
-                                        <a href="{% url 'appointments:create_appointment' %}?instructor={{ instructor.id }}&date={{ day|date:'Y-m-d' }}&time={{ time }}" class="text-blue-600 text-sm underline">🕒 Ajouter un RDV</a>
+                                        <a href="{% url 'appointments:create_appointment' %}?instructor={{ instructor.id }}&date={{ day|date:'Y-m-d' }}&time={{ time }}" class="text-sky-500 text-sm underline">🕒 Ajouter un RDV</a>
                                     </td>
                                 {% else %}
                                     <td class="px-4 py-4 text-center text-red-600 font-bold">

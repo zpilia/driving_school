@@ -44,7 +44,7 @@
     <!-- En-tête / Navigation -->
     <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <div class="text-xl font-bold text-blue-700">
+        <div class="text-xl font-bold text-sky-600">
           <a href="{% url 'home' %}">Auto-école</a>
         </div>
 
@@ -52,28 +52,27 @@
           <ul class="flex flex-wrap items-center space-x-6 text-sm text-gray-700 font-medium">
             {% if user.is_authenticated %}
               {% if user.role == 'student' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
-                <li><a href="{% url 'planning:schedule' %}" class="hover:text-blue-600">Mon planning</a></li>
-                <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-blue-600">Mes Progression</a></li>
-                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Mes rendez-vous</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'planning:schedule' %}" class="hover:text-sky-500">Mon planning</a></li>
+                <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-sky-500">Mes Progression</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-sky-500">Mes rendez-vous</a></li>
 
               {% elif user.role == 'instructor' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
-                <li><a href="{% url 'planning:instructor_schedule' user.id %}" class="hover:text-blue-600">Mon planning</a></li>
-                <li><a href="{% url 'appointments:list' %}" class="hover:text-blue-600">Mes rendez-vous</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'planning:instructor_schedule' user.id %}" class="hover:text-sky-500">Mon planning</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-sky-500">Mes rendez-vous</a></li>
 
               {% elif user.role == 'secretary' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
-                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Gérer les comptes</a></li>
-                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Ajouter des heures</a></li>
-                <li><a href="{% url 'planning:general_schedule_default' %}" class="hover:text-blue-600">Planning général</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-sky-500">Gérer les comptes</a></li>
+                <li><a href="{% url 'planning:general_schedule_default' %}" class="hover:text-sky-500">Planning général</a></li>
 
               {% elif user.role == 'admin' %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Tableau de bord</a></li>
-                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Gérer les comptes</a></li>
-                <li><a href="{% url 'accounts:manage_secretaries' %}" class="hover:text-blue-600">Secrétaires</a></li>
-                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Heures de leçon</a></li>
-                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Planning général</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-sky-500">Gérer les comptes</a></li>
+                <li><a href="{% url 'accounts:manage_secretaries' %}" class="hover:text-sky-500">Secrétaires</a></li>
+                <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-sky-500">Heures de leçon</a></li>
+                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-sky-500">Planning général</a></li>
               {% endif %}
 
               <li>
@@ -89,7 +88,7 @@
 
             {% else %}
               <li>
-                <a href="{% url 'login' %}" class="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium">
+                <a href="{% url 'login' %}" class="flex items-center gap-1 text-sky-500 hover:text-sky-800 font-medium">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9"></path>
                     </svg>

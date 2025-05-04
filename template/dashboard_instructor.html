@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <h1 class="text-3xl font-bold text-blue-800 mb-8">
+  <h1 class="text-3xl font-bold text-sky-600 mb-8">
     Bienvenue, {{ user.get_full_name|default:user.username }} (Moniteur)
   </h1>
 
@@ -14,7 +14,7 @@
   {% if appointments %}
     <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
       <table class="min-w-full table-auto divide-y divide-gray-200">
-        <thead class="bg-blue-50">
+        <thead class="bg-sky-50">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Heure</th>
