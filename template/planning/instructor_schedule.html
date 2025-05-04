@@ -14,9 +14,11 @@
         <a href="{% url 'planning:instructor_schedule' instructor.id %}?start_date={{ next_week_date }}" class="text-blue-600 hover:underline">
             Semaine suivante →
         </a>
-        <a href="{% url 'planning:general_schedule_default' %}" class="text-white bg-blue-600 hover:bg-blue-800 rounded px-4 py-2">
-            Retour au planning général
-        </a>
+        {% if user.role == 'secretary' or user.role == 'admin' %}
+            <a href="{% url 'planning:general_schedule_default' %}" class="text-white bg-blue-600 hover:bg-blue-800 rounded px-4 py-2">
+                Retour au planning général
+            </a>
+        {% endif %}
          <a href="{% url 'appointments:list' %}" class="text-white bg-blue-600 hover:bg-blue-800 rounded px-4 py-2">
             Gérer mes rendez-vous
         </a>

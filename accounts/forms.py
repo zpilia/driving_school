@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
+from django.contrib.auth.forms import SetPasswordForm
+
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -38,3 +40,38 @@ class CustomUserForm(forms.ModelForm):
             self.fields['role'].label = "Rôle"
             self.fields['first_name'].label = "Prénom"
             self.fields['last_name'].label = "Nom"
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="Nouveau mot de passe",
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+        }),
+        error_messages={
+            'required': 'Ce champ est obligatoire.',
+            'min_length': 'Le mot de passe doit contenir au moins 8 caractères.'
+        }
+    )
+    new_password2 = forms.CharField(
+        label="Confirmer le mot de passe",
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+        }),
+        error_messages={
+            'required': 'Ce champ est obligatoire.',
+            'min_length': 'Le mot de passe de confirmation doit contenir au moins 8 caractères.'
+        }
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("new_password1")
+        password2 = cleaned_data.get("new_password2")
+
+        if password1 != password2:
+            raise forms.ValidationError("Les mots de passe ne correspondent pas.")
+        return cleaned_data
+
+
+

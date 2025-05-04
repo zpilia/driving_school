@@ -47,6 +47,17 @@
                   {% endif %}
                 </span>
               </p>
+                 <div class="ml-4 flex items-center space-x-2">
+                {% if user == appt.instructor or user == appt.student or user.is_admin %}
+                  <a href="{% url 'appointments:edit_appointment' appt.pk %}"
+                     class="text-blue-600 hover:text-blue-800 font-medium">✏️ Modifier</a>
+                {% endif %}
+
+                {% if user == appt.instructor or user == appt.student or user.is_admin %}
+                  <a href="{% url 'appointments:delete_appointment' appt.pk %}"
+                     class="text-red-600 hover:text-red-800 font-medium">🗑️ Supprimer</a>
+                {% endif %}
+              </div>
             </li>
           {% endfor %}
         </ul>

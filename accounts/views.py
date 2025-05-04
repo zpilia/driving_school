@@ -8,9 +8,16 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.http import Http404
+
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.contrib import messages
+from django.utils.http import urlsafe_base64_decode
+
 
 from .decorators import role_required
-from .forms import CustomUserCreationForm, CustomUserForm
+from .forms import CustomUserCreationForm, CustomUserForm, CustomSetPasswordForm
 from .models import CustomUser
 
 # Import des modèles provenant d'autres applications
@@ -212,7 +219,7 @@ class AccountCreateView(LoginRequiredMixin, CreateView):
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
 
         reset_url = self.request.build_absolute_uri(
-            reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+            reverse('accounts:reset_password', kwargs={'uidb64': uidb64, 'token': token})
         )
 
         subject = "Activation de votre compte - Auto-école"
@@ -301,7 +308,7 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
 
 
 @login_required
-@role_required(['secretary', 'admin'])
+@role_required(['secretary', 'admin', 'instructor'])
 def student_infos(request, pk):
     student = get_object_or_404(CustomUser, pk=pk, role='student')
     appointments = Appointment.objects.filter(student=student)
@@ -332,29 +339,31 @@ def manage_secretaries_view(request):
 
 
 
-def create_account_and_send_email(request):
-    """
-    Vue permettant à un admin de créer un compte sans mot de passe,
-    d'envoyer un email à l'utilisateur pour qu'il puisse définir son mot de passe.
-    """
+def reset_password(request, uidb64, token):
+
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, user.DoesNotExist):
+        raise Http404("Utilisateur non trouvé")
+
+    if not default_token_generator.check_token(user, token):
+        messages.error(request, "Le lien de réinitialisation du mot de passe est invalide ou expiré.")
+        return redirect('home')
+
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+
+        form = CustomSetPasswordForm(user=user, data=request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.set_unusable_password()
-            user.save()
-            token = default_token_generator.make_token(user)
-            uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_url = request.build_absolute_uri(
-                reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
-            )
-            subject = "Activation de votre compte - Définir votre mot de passe"
-            message = f"Bonjour {user.username},\n\n" \
-                      f"Veuillez cliquer sur le lien ci-dessous pour définir votre mot de passe et activer votre compte :\n" \
-                      f"{reset_url}\n\n" \
-                      f"Merci."
-            send_mail(subject, message, 'no-reply@yourdomain.com', [user.email])
-            return redirect('accounts:account_list')
+            form.save()
+            messages.success(request, "Votre mot de passe a été réinitialisé avec succès.")
+            return redirect('home')
     else:
-        form = CustomUserCreationForm()
-    return render(request, 'accounts/create_account_email.html', {'form': form})
+        form = CustomSetPasswordForm(user=user)
+
+    context = {
+        'form': form,
+        'uidb64': uidb64,
+        'token': token,
+    }
+    return render(request, 'accounts/password_reset_form.html', context)

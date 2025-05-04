@@ -7,10 +7,9 @@ urlpatterns = [
     path('', home, name='home'),
     path('admin/', admin.site.urls),
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', LogoutView.as_view, name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),
     path('planning/', include(('planning.urls', 'planning'), namespace='planning')),
     path('lessonpackages/', include(('lessonpackages.urls', 'lessonpackages'), namespace='lessonpackages')),
     path('appointments/', include(('appointments.urls', 'appointments'), namespace='appointments')),
-    path('accounts/password_reset/', include('django.contrib.auth.urls')),
 ]

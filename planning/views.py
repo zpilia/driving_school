@@ -137,7 +137,8 @@ def instructor_schedule(request, instructor_id=None):
                 if appointment:
                     student_name = appointment.student.get_full_name()
                     location = appointment.location if hasattr(appointment, 'location') else 'Lieu inconnu'
-                    schedule[day_str][time] = f"{student_name}<br><span class='text-xs text-gray-600'>{location}</span>"
+                    student_id = appointment.student.id
+                    schedule[day_str][time] = f"<a href='/accounts/students/{student_id}/infos/'>{student_name}</a><br><span class='text-xs text-gray-600'>{location}</span>"
                 else:
                     schedule[day_str][time] = 'available'
 

@@ -13,8 +13,8 @@ from .views import (
     AccountCreateView,
     AccountUpdateView,
     AccountDeleteView,
-    create_account_and_send_email,
-    student_infos
+    student_infos,
+    reset_password
 )
 
 urlpatterns = [
@@ -30,5 +30,7 @@ urlpatterns = [
     path('manage_accounts/<int:pk>/update/', AccountUpdateView.as_view(), name='account_update'),
     path('manage_accounts/<int:pk>/delete/', AccountDeleteView.as_view(), name='account_delete'),
     path('manage_secretaries/', manage_secretaries_view, name='manage_secretaries'),
-    path('create_account_email/', create_account_and_send_email, name='create_account_email'),
-    path('students/<int:pk>/infos/', student_infos, name='student_infos'),]
+    path('students/<int:pk>/infos/', student_infos, name='student_infos'),
+    path('reset_password/<uidb64>/<token>/', reset_password, name='reset_password'),
+
+]
