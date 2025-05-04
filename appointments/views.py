@@ -1,6 +1,6 @@
 from pyexpat.errors import messages
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, Http404
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -9,14 +9,17 @@ from django.urls import reverse_lazy
 from .models import AppointmentRequest
 from .forms import AppointmentRequestForm, AppointmentRequestUpdateForm, AppointmentForm
 
-from .models import Appointment
 from accounts.decorators import role_required
 from django.views.generic import DeleteView
 from lessonpackages.models import LessonPackage
 
+from django.shortcuts import render
+from django.utils import timezone
+from .models import Appointment
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from datetime import datetime, timedelta
 
-class GeneralScheduleView(TemplateView):
-    template_name = 'appointments/general_schedule.html'
 
 class AppointmentListView(LoginRequiredMixin, ListView):
     model = Appointment
@@ -96,7 +99,6 @@ class AppointmentRequestListView(LoginRequiredMixin, ListView):
         return AppointmentRequest.objects.filter(instructor=self.request.user)
 
 
-
 @method_decorator(role_required(['secretary', 'admin']), name='dispatch')
 class AppointmentCreateView(LoginRequiredMixin, CreateView):
     model = Appointment
@@ -104,9 +106,41 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'appointments/appointment_form.html'
     success_url = reverse_lazy('appointments:manage')
 
+    def get_initial(self):
+
+        initial = super().get_initial()
+
+        instructor_id = self.request.GET.get('instructor')
+        date = self.request.GET.get('date')
+        time = self.request.GET.get('time')
+
+        if instructor_id:
+            instructor = get_object_or_404(User, id=instructor_id)
+            initial['instructor'] = instructor
+
+        if date:
+            initial['date'] = date
+
+        if time:
+            initial['time'] = time
+
+        return initial
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.user.role in ['secretary', 'admin']:
+            return super().dispatch(request, *args, **kwargs)
+
+        instructor_id = self.request.GET.get('instructor')
+        if instructor_id:
+            instructor = get_object_or_404(User, id=instructor_id)
+            if instructor != request.user:
+                raise Http404("Vous n'êtes pas autorisé à créer ce rendez-vous.")
+
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         student = form.cleaned_data['student']
-
         lesson_package = LessonPackage.objects.filter(student=student).first()
 
         if lesson_package and lesson_package.paid_hours > lesson_package.used_hours:
@@ -158,3 +192,47 @@ class AppointmentView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+@login_required
+@role_required(['secretary', 'admin'])
+def add_appointment(request):
+    date_str = request.GET.get('date')
+    time = request.GET.get('time')
+
+    if not date_str or not time:
+        return redirect('planning:general_schedule_default')
+
+    date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+
+    instructors = User.objects.filter(role='instructor')
+
+    instructor_availability = []
+
+    for instructor in instructors:
+        appointment = Appointment.objects.filter(instructor=instructor, date=date, time=time).first()
+
+        if appointment:
+            instructor_availability.append({
+                'instructor': instructor,
+                'available': False,
+                'student': appointment.student,
+                'location': appointment.location
+            })
+        else:
+            instructor_availability.append({
+                'instructor': instructor,
+                'available': True,
+                'student': None,
+                'location': None
+            })
+
+    context = {
+        'date': date,
+        'time': time,
+        'instructor_availability': instructor_availability,
+        'form': AppointmentForm(initial={'date': date, 'time': time}),
+    }
+
+    return render(request, 'appointments/add_appointment.html', context)
+
+
