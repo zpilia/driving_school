@@ -59,7 +59,7 @@
                 <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>
                 <li><a href="{% url 'accounts:account_list' %}" class="hover:text-blue-600">Manage Accounts</a></li>
                 <li><a href="{% url 'lessonpackages:manage' %}" class="hover:text-blue-600">Add Hours</a></li>
-                <li><a href="{% url 'appointments:general_schedule' %}" class="hover:text-blue-600">Schedule</a></li>
+                <li><a href="{% url 'planning:general_schedule_default' %}" class="hover:text-blue-600">Schedule</a></li>
 
               {% elif user.role == 'admin' %}
                 <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-blue-600">Dashboard</a></li>

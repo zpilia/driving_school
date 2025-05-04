@@ -2,13 +2,16 @@ from django.views.generic import ListView
 from django.db.models import Case, When, Value, IntegerField
 from appointments.models import Appointment
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404,  redirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from accounts.models import CustomUser
 from datetime import datetime, timedelta
-import calendar
+from accounts.decorators import role_required
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+
 
 class ScheduleListView(ListView):
     model = Appointment
@@ -40,44 +43,118 @@ class ScheduleListView(ListView):
 
 
 @login_required
-def global_planning_view(request, year=None, month=None):
-    if not year or not month:
-        now = timezone.now()
-        year = now.year
-        month = now.month
+@role_required(['secretary', 'admin'])
+def general_schedule(request, start_date=None):
+    today = timezone.now().date()
 
-    month_days = calendar.monthcalendar(year, month)
-    instructors = CustomUser.objects.filter(role='instructor')
+    if not start_date:
+        start_of_week = today - timedelta(days=today.weekday())
+    else:
+        start_of_week = datetime.strptime(start_date, '%Y-%m-%d').date()
 
-    appointments = Appointment.objects.filter(date__year=year, date__month=month)
+    end_of_week = start_of_week + timedelta(days=5)
+    week_days = [start_of_week + timedelta(days=i) for i in range(6)]
+    schedule_slots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00']
 
-    time_slots = []
-    for instructor in instructors:
-        start_time = datetime.strptime('09:00:00', '%H:%M:%S').time()
-        end_time = datetime.strptime('17:00:00', '%H:%M:%S').time()
-        lunch_start = datetime.strptime('12:00:00', '%H:%M:%S').time()
-        lunch_end = datetime.strptime('13:00:00', '%H:%M:%S').time()
+    appointments = Appointment.objects.filter(date__range=[start_of_week, end_of_week])
+    total_instructors = User.objects.filter(role='instructor').count()
 
-        current_time = datetime.combine(datetime.today(), start_time)
-        while current_time.time() < end_time:
-            if current_time.time() < lunch_start or current_time.time() >= lunch_end:
-                time_slots.append((instructor, current_time))
-            current_time += timedelta(minutes=30)
+    schedule = {}
+    appointments_dict = {}
 
-    appointments_by_day = {}
-    for app in appointments:
-        day = app.date.day
-        if day not in appointments_by_day:
-            appointments_by_day[day] = []
-        appointments_by_day[day].append(app)
+    for day in week_days:
+        day_str = str(day)
+        schedule[day_str] = {}
+        for time in schedule_slots:
+            if time == '12:00':
+                schedule[day_str][time] = 'pause'
+            else:
+                booked_appointments = appointments.filter(date=day, time=time)
+                appointments_dict[f"{day}_{time}"] = booked_appointments.first()
+
+                if booked_appointments.count() >= total_instructors:
+                    schedule[day_str][time] = 'full'
+                else:
+                    schedule[day_str][time] = 'available'
+
+    instructors = User.objects.filter(role='instructor')
+
+    prev_week_date = (start_of_week - timedelta(days=7)).strftime('%Y-%m-%d')
+    next_week_date = (start_of_week + timedelta(days=7)).strftime('%Y-%m-%d')
 
     context = {
-        'month_days': month_days,
-        'appointments_by_day': appointments_by_day,
-        'time_slots': time_slots,
-        'current_month': month,
-        'current_year': year,
-        'months': calendar.month_name,
+        'schedule': schedule,
+        'schedule_slots': schedule_slots,
+        'week_days': week_days,
+        'appointments_dict': appointments_dict,
+        'instructors': instructors,
+        'week_range': f"Semaine du {start_of_week.strftime('%d/%m')} au {end_of_week.strftime('%d/%m')}",
+        'prev_week_date': prev_week_date,
+        'next_week_date': next_week_date,
     }
 
-    return render(request, 'planning/global_planning_view.html', context)
+    return render(request, 'planning/general_schedule.html', context)
+
+@login_required
+@role_required(['secretary', 'admin', 'instructor'])
+def instructor_schedule(request, instructor_id=None):
+    user = request.user
+
+    if instructor_id is None:
+        if user.role == 'instructor':
+            instructor = user
+        else:
+            return redirect('home')
+    else:
+        instructor = get_object_or_404(User, id=instructor_id, role='instructor')
+        if user.role == 'instructor' and instructor != user:
+            return redirect('home')
+
+    today = timezone.now().date()
+    start_date_str = request.GET.get('start_date')
+    if not start_date_str:
+        start_of_week = today - timedelta(days=today.weekday())
+    else:
+        start_of_week = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+
+    end_of_week = start_of_week + timedelta(days=5)
+    week_days = [start_of_week + timedelta(days=i) for i in range(6)]
+    schedule_slots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00']
+
+    appointments = Appointment.objects.filter(
+        instructor=instructor,
+        date__range=[start_of_week, end_of_week]
+    )
+
+    schedule = {}
+    for day in week_days:
+        day_str = str(day)
+        schedule[day_str] = {}
+        for time in schedule_slots:
+            if time == '12:00':
+                schedule[day_str][time] = 'pause'
+            else:
+                appointment = appointments.filter(date=day, time=time).first()
+                if appointment:
+                    student_name = appointment.student.get_full_name()
+                    location = appointment.location if hasattr(appointment, 'location') else 'Lieu inconnu'
+                    schedule[day_str][time] = f"{student_name}<br><span class='text-xs text-gray-600'>{location}</span>"
+                else:
+                    schedule[day_str][time] = 'available'
+
+    prev_week_date = (start_of_week - timedelta(days=7)).strftime('%Y-%m-%d')
+    next_week_date = (start_of_week + timedelta(days=7)).strftime('%Y-%m-%d')
+
+    context = {
+        'instructor': instructor,
+        'schedule': schedule,
+        'schedule_slots': schedule_slots,
+        'week_days': week_days,
+        'week_range': f"Semaine du {start_of_week.strftime('%d/%m')} au {end_of_week.strftime('%d/%m')}",
+        'prev_week_date': prev_week_date,
+        'next_week_date': next_week_date,
+    }
+
+    return render(request, 'planning/instructor_schedule.html', context)
+
+
