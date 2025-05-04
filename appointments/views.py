@@ -20,7 +20,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from datetime import datetime, timedelta
 
-
 class AppointmentListView(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = 'appointments/list.html'
@@ -41,7 +40,6 @@ class AppointmentListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        # On ajoute les demandes de rendez-vous selon le rôle
         if user.role == 'instructor':
             context['requests'] = AppointmentRequest.objects.filter(instructor=user)
         elif user.role == 'student':

@@ -38,7 +38,3 @@ class CustomUserForm(forms.ModelForm):
             self.fields['role'].label = "Rôle"
             self.fields['first_name'].label = "Prénom"
             self.fields['last_name'].label = "Nom"
-
-
-
-

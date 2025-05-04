@@ -9,7 +9,7 @@ def role_required(allowed_roles):
     """
     def decorator(view_func):
         @wraps(view_func)
-        @login_required  # L'utilisateur doit être connecté
+        @login_required
         def _wrapped_view(request, *args, **kwargs):
             if request.user.role not in allowed_roles:
                 return HttpResponseForbidden("Vous n'avez pas l'autorisation d'accéder à cette page.")

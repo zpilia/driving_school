@@ -1,4 +1,3 @@
-# my_driving_school/views.py
 from django.shortcuts import redirect
 
 def home(request):

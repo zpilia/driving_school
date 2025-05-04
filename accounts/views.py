@@ -105,7 +105,6 @@ def secretary_dashboard(request):
 @login_required
 @role_required(['admin'])
 def admin_dashboard(request):
-    # Récupère la liste des étudiants, instructeurs et secrétaires
     students = CustomUser.objects.filter(role='student')
     instructors = CustomUser.objects.filter(role='instructor')
     secretaries = CustomUser.objects.filter(role='secretary')
@@ -119,7 +118,6 @@ def admin_dashboard(request):
 
 @login_required
 def dashboard_view(request):
-    # Redirige vers le dashboard correspondant au rôle de l'utilisateur
     if request.user.role == 'student':
         return student_dashboard(request)
     elif request.user.role == 'instructor':
@@ -343,13 +341,10 @@ def create_account_and_send_email(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            # Définir un mot de passe inutilisable pour empêcher l'accès avant validation
             user.set_unusable_password()
             user.save()
-            # Générer le token et uidb64 pour le processus de réinitialisation
             token = default_token_generator.make_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-            # Construire l'URL de réinitialisation (password_reset_confirm est fourni par Django)
             reset_url = request.build_absolute_uri(
                 reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
             )
@@ -358,7 +353,6 @@ def create_account_and_send_email(request):
                       f"Veuillez cliquer sur le lien ci-dessous pour définir votre mot de passe et activer votre compte :\n" \
                       f"{reset_url}\n\n" \
                       f"Merci."
-            # Envoyer l'email (Assurez-vous que vos paramètres EMAIL_* sont configurés dans settings.py)
             send_mail(subject, message, 'no-reply@yourdomain.com', [user.email])
             return redirect('accounts:account_list')
     else:

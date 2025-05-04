@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
-    # Ajoutez 'role' aux listes de champs affichés
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('role',)}),
     )

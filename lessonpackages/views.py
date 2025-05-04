@@ -36,7 +36,6 @@ class LessonPackageProgressView(TemplateView):
         context = super().get_context_data(**kwargs)
         student = self.request.user
 
-        # Récupération de tous les forfaits de l'étudiant
         lesson_packages = LessonPackage.objects.filter(student=student)
 
         progress_data = []
@@ -53,15 +52,12 @@ class LessonPackageProgressView(TemplateView):
                 'progression': progression,
             })
 
-        # Séparation des forfaits selon leur état d'avancement
         started = [p for p in progress_data if 0 < p['progression'] < 100]
         not_started = [p for p in progress_data if p['progression'] == 0]
         completed = [p for p in progress_data if p['progression'] >= 100]
 
-        # Tri des forfaits en cours par progression croissante
         started = sorted(started, key=lambda p: p['progression'])
 
-        # Construction du contexte final
         context['progress_data'] = started + not_started + completed
 
         return context
