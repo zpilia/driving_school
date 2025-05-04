@@ -1,3 +1,6 @@
+from datetime import timedelta
+from django.utils import timezone
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
@@ -80,11 +83,17 @@ def instructor_dashboard(request):
 @login_required
 @role_required(['secretary'])
 def secretary_dashboard(request):
-    # Récupère la liste des étudiants
     students = CustomUser.objects.filter(role='student')
+
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    start_date_formatted = start_of_week.strftime('%Y-%m-%d')
+
     context = {
         'user': request.user,
         'students': students,
+        'start_date': start_of_week,
+        'today': today,
     }
     return render(request, 'dashboard_secretary.html', context)
 
