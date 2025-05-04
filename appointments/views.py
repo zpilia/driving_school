@@ -99,15 +99,18 @@ class AppointmentRequestListView(LoginRequiredMixin, ListView):
         return AppointmentRequest.objects.filter(instructor=self.request.user)
 
 
-@method_decorator(role_required(['secretary', 'admin']), name='dispatch')
+@method_decorator(role_required(['secretary', 'admin', 'instructor']), name='dispatch')
 class AppointmentCreateView(LoginRequiredMixin, CreateView):
     model = Appointment
     form_class = AppointmentForm
     template_name = 'appointments/appointment_form.html'
-    success_url = reverse_lazy('appointments:manage')
+
+    def get_success_url(self):
+        if self.request.user.role == 'instructor':
+            return reverse_lazy('planning:instructor_schedule', kwargs={'instructor_id': self.request.user.id})
+        return reverse_lazy('appointments:manage')
 
     def get_initial(self):
-
         initial = super().get_initial()
 
         instructor_id = self.request.GET.get('instructor')
@@ -127,7 +130,6 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
         return initial
 
     def dispatch(self, request, *args, **kwargs):
-
         if request.user.role in ['secretary', 'admin']:
             return super().dispatch(request, *args, **kwargs)
 
@@ -141,6 +143,14 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         student = form.cleaned_data['student']
+        date = form.cleaned_data['date']
+        time = form.cleaned_data['time']
+
+        conflicting_appointments = Appointment.objects.filter(student=student, date=date, time=time)
+        if conflicting_appointments.exists():
+            messages.error(self.request, "Cet étudiant a déjà un rendez-vous à cette date et heure.")
+            return self.form_invalid(form)
+
         lesson_package = LessonPackage.objects.filter(student=student).first()
 
         if lesson_package and lesson_package.paid_hours > lesson_package.used_hours:
@@ -151,15 +161,36 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
 
-@method_decorator(role_required(['secretary', 'admin']), name='dispatch')
+@method_decorator(role_required(['secretary', 'admin', 'instructor']), name='dispatch')
 class AppointmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Appointment
     form_class = AppointmentForm
     template_name = 'appointments/appointment_form.html'
-    success_url = reverse_lazy('appointments:manage')
+
+    def get_success_url(self):
+        if self.request.user.role == 'instructor':
+            return reverse_lazy('planning:instructor_schedule', kwargs={'instructor_id': self.request.user.id})
+        return reverse_lazy('appointments:manage')
+
+    def dispatch(self, request, *args, **kwargs):
+        appointment = self.get_object()
+
+        if request.user.role == 'instructor':
+            if appointment.instructor != request.user:
+                raise Http404("Vous n'êtes pas autorisé à modifier ce rendez-vous.")
+
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         student = form.cleaned_data['student']
+        date = form.cleaned_data['date']
+        time = form.cleaned_data['time']
+
+        conflicting_appointments = Appointment.objects.filter(student=student, date=date, time=time).exclude(
+            id=self.object.id)
+        if conflicting_appointments.exists():
+            messages.error(self.request, "Cet étudiant a déjà un rendez-vous à cette date et heure.")
+            return self.form_invalid(form)
 
         lesson_package = LessonPackage.objects.filter(student=student).first()
 
@@ -170,11 +201,23 @@ class AppointmentUpdateView(LoginRequiredMixin, UpdateView):
             messages.error(self.request, "Cet étudiant n'a pas d'heures payées disponibles.")
             return self.form_invalid(form)
 
-@method_decorator(role_required(['secretary', 'admin']), name='dispatch')
+
+@method_decorator(role_required(['secretary', 'admin', 'instructor']), name='dispatch')
 class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Appointment
     template_name = 'appointments/appointment_confirm_delete.html'
-    success_url = reverse_lazy('appointments:manage')
+
+    def get_success_url(self):
+        if self.request.user.role == 'instructor':
+            return reverse_lazy('planning:instructor_schedule', kwargs={'instructor_id': self.request.user.id})
+        return reverse_lazy('appointments:manage')
+
+    def dispatch(self, request, *args, **kwargs):
+        appointment = self.get_object()
+        if request.user.role == 'instructor':
+            if appointment.instructor != request.user:
+                raise Http404("Vous n'êtes pas autorisé à supprimer ce rendez-vous.")
+        return super().dispatch(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Rendez-vous supprimé avec succès.")
