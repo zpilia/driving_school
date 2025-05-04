@@ -305,7 +305,7 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
 
 
 @login_required
-@role_required(['secretary', 'admin'])
+@role_required(['secretary', 'admin', 'instructor'])
 def student_infos(request, pk):
     student = get_object_or_404(CustomUser, pk=pk, role='student')
     appointments = Appointment.objects.filter(student=student)

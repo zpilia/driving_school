@@ -18,11 +18,11 @@
                 <p class="text-gray-700 font-medium">{{ appt.date }} à {{ appt.time }}</p>
                 <p class="text-sm text-gray-500">Lieu : {{ appt.location }}</p>
                 <p class="text-sm text-gray-500">Avec :
-                  {% if user.role == 'student' %}
-                    {{ appt.instructor.username }}
-                  {% else %}
-                    {{ appt.student.username }}
-                  {% endif %}
+                    {% if user.role == 'student' %}
+                        {{ appt.instructor.username }}
+                    {% else %}
+                        <a href="{% url 'accounts:student_infos' appt.student.id %}">{{ appt.student.username }}</a>
+                    {% endif %}
                 </p>
                 <p class="text-sm mt-1 text-gray-500">
                   Statut :
