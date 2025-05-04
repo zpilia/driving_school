@@ -172,11 +172,16 @@ class AccountListView(LoginRequiredMixin, ListView):
     template_name = 'accounts/account_list.html'
     context_object_name = 'accounts'
     def get_queryset(self):
-        queryset = CustomUser.objects.filter(role__in=['student', 'instructor'])
-
         search = self.request.GET.get('search', '')
         roles = self.request.GET.getlist('role')
         is_active = self.request.GET.get('is_active')
+
+        if self.request.user.role == 'admin':
+            queryset = CustomUser.objects.all()
+        elif self.request.user.role == 'secretary':
+            queryset = CustomUser.objects.filter(role__in=['student', 'instructor'])
+        else:
+            queryset = CustomUser.objects.none()
 
         if search:
             queryset = queryset.filter(
