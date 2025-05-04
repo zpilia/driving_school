@@ -1,0 +1,62 @@
+[
+    {
+        "model": "accounts.customuser",
+        "pk": 1,
+        "fields": {
+            "username": "student1",
+            "password": "pbkdf2_sha256$260000$XHuH5b2S3Kq3$VZ/Kp36CptG9FvOBuU9Q3pGgRf2kkYnNdtvJrVfEEXI=",
+            "email": "student1@example.com",
+            "role": "student",
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "first_name": "",
+            "last_name": ""
+        }
+    },
+    {
+        "model": "accounts.customuser",
+        "pk": 2,
+        "fields": {
+            "username": "instructor1",
+            "password": "pbkdf2_sha256$260000$XHuH5b2S3Kq3$VZ/Kp36CptG9FvOBuU9Q3pGgRf2kkYnNdtvJrVfEEXI=",
+            "email": "instructor1@example.com",
+            "role": "instructor",
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "first_name": "",
+            "last_name": ""
+        }
+    },
+    {
+        "model": "accounts.customuser",
+        "pk": 3,
+        "fields": {
+            "username": "secretary1",
+            "password": "pbkdf2_sha256$260000$XHuH5b2S3Kq3$VZ/Kp36CptG9FvOBuU9Q3pGgRf2kkYnNdtvJrVfEEXI=",
+            "email": "secretary1@example.com",
+            "role": "secretary",
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "first_name": "",
+            "last_name": ""
+        }
+    },
+    {
+        "model": "accounts.customuser",
+        "pk": 4,
+        "fields": {
+            "username": "admin1",
+            "password": "pbkdf2_sha256$260000$XHuH5b2S3Kq3$VZ/Kp36CptG9FvOBuU9Q3pGgRf2kkYnNdtvJrVfEEXI=",
+            "email": "admin1@example.com",
+            "role": "admin",
+            "is_superuser": true,
+            "is_staff": true,
+            "is_active": true,
+            "first_name": "",
+            "last_name": ""
+        }
+    }
+]

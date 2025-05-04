@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Supprimer un rendez-vous{% endblock %}
+
+{% block content %}
+  <div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-center mb-4">Êtes-vous sûr de vouloir supprimer ce rendez-vous ?</h1>
+    <p class="text-center mb-6">
+      Vous êtes sur le point de supprimer un rendez-vous entre
+      <strong>{{ object.student }}</strong> et <strong>{{ object.instructor }}</strong> le
+      <strong>{{ object.date }} à {{ object.time }}</strong>. Cette action est irréversible.
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="flex justify-between">
+        <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-700 transition duration-200">
+          Confirmer la suppression
+        </button>
+        <a href="{% url 'appointments:manage' %}" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-700 transition duration-200">
+          Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

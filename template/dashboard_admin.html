@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-3xl font-bold text-blue-800 mb-8">
+    Bienvenue, {{ user.get_full_name|default:user.username }} (Administrateur)
+  </h1>
+
+  <!-- Gestion des étudiants -->
+  <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">👨‍🎓 Étudiants</h2>
+    {% if students %}
+      <ul class="space-y-2">
+        {% for student in students %}
+          <li class="text-gray-700">{{ student.get_full_name|default:student.username }} — {{ student.email }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-600 italic">Aucun étudiant trouvé.</p>
+    {% endif %}
+  </div>
+
+  <!-- Gestion des instructeurs -->
+  <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">🧑‍🏫 Moniteurs</h2>
+    {% if instructors %}
+      <ul class="space-y-2">
+        {% for instructor in instructors %}
+          <li class="text-gray-700">{{ instructor.get_full_name|default:instructor.username }} — {{ instructor.email }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-600 italic">Aucun moniteur trouvé.</p>
+    {% endif %}
+  </div>
+
+  <!-- Gestion des secrétaires -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 Secrétaires</h2>
+    {% if secretaries %}
+      <ul class="space-y-2">
+        {% for sec in secretaries %}
+          <li class="text-gray-700">{{ sec.get_full_name|default:sec.username }} — {{ sec.email }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-600 italic">Aucune secrétaire trouvée.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

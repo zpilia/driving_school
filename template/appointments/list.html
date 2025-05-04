@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Mes Rendez-vous{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Rendez-vous confirmés -->
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold text-gray-700 mb-4">Rendez-vous Confirmés</h2>
+      {% if appointments %}
+        <ul class="divide-y divide-gray-200">
+          {% for appt in appointments %}
+            <li class="py-3">
+              <p class="text-gray-700 font-medium">Le {{ appt.date|date:"l d F Y"|capfirst }}</p>
+              <p class="text-sm text-gray-500">Heure : {{ appt.time|time:"H:i" }}</p>
+              <p class="text-sm text-gray-500">Lieu : {{ appt.location }}</p>
+              <p class="text-sm text-gray-500">
+                Avec :
+                {% if user.role == 'student' %}
+                  {{ appt.instructor.username }}
+                {% else %}
+                  {{ appt.student.username }}
+                {% endif %}
+              </p>
+              <p class="text-sm mt-1 text-gray-500">
+                Statut :
+                <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full
+                  {% if appt.status == 'scheduled' %}
+                    bg-blue-100 text-blue-800
+                  {% elif appt.status == 'completed' %}
+                    bg-green-100 text-green-800
+                  {% elif appt.status == 'cancelled' %}
+                    bg-red-100 text-red-800
+                  {% else %}
+                    bg-gray-100 text-gray-800
+                  {% endif %}
+                ">
+                  {% if appt.status == 'scheduled' %}
+                    Prévu
+                  {% elif appt.status == 'completed' %}
+                    Terminé
+                  {% elif appt.status == 'cancelled' %}
+                    Annulé
+                  {% else %}
+                    Inconnu
+                  {% endif %}
+                </span>
+              </p>
+                 <div class="ml-4 flex items-center space-x-2">
+                {% if user == appt.instructor or user == appt.student or user.is_admin %}
+                  <a href="{% url 'appointments:edit_appointment' appt.pk %}"
+                     class="text-blue-600 hover:text-blue-800 font-medium">✏️ Modifier</a>
+                {% endif %}
+
+                {% if user == appt.instructor or user == appt.student or user.is_admin %}
+                  <a href="{% url 'appointments:delete_appointment' appt.pk %}"
+                     class="text-red-600 hover:text-red-800 font-medium">🗑️ Supprimer</a>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-sm text-gray-500">Aucun rendez-vous prévu.</p>
+      {% endif %}
+    </div>
+
+    <!-- Demandes de rendez-vous -->
+    <div class="bg-white p-6 rounded shadow">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold text-gray-700">Demandes de Rendez-vous</h2>
+        {% if user.role == 'student' %}
+          <a href="{% url 'appointments:request_appointment' %}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white p-1.5 rounded-full" title="Créer une demande">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+
+      {% if requests %}
+        <ul class="divide-y divide-gray-200">
+          {% for req in requests %}
+            <li class="py-3 flex justify-between items-start">
+              <div>
+                <p class="text-gray-700 font-medium">Le {{ req.date|date:"l d F Y"|capfirst }}</p>
+                <p class="text-sm text-gray-500">Heure : {{ req.time|time:"H:i" }}</p>
+                <p class="text-sm text-gray-500">Lieu : {{ req.location }}</p>
+                <p class="text-sm text-gray-500">
+                  Avec :
+                  {% if user.role == 'student' %}
+                    {{ req.instructor.username }}
+                  {% else %}
+                    {{ req.student.username }}
+                  {% endif %}
+                </p>
+                <p class="text-sm mt-1 text-gray-500">
+                  Statut :
+                  <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full
+                    {% if req.status == 'accepted' %}
+                      bg-green-100 text-green-800
+                    {% elif req.status == 'refused' %}
+                      bg-red-100 text-red-800
+                    {% elif req.status == 'pending' %}
+                      bg-yellow-100 text-yellow-800
+                    {% elif req.status == 'proposed' %}
+                      bg-blue-100 text-blue-800
+                    {% else %}
+                      bg-gray-100 text-gray-800
+                    {% endif %}
+                  ">
+                    {% if req.status == 'accepted' %}
+                      Acceptée
+                    {% elif req.status == 'refused' %}
+                      Refusée
+                    {% elif req.status == 'pending' %}
+                      En attente
+                    {% elif req.status == 'proposed' %}
+                      Proposée
+                    {% else %}
+                      Inconnu
+                    {% endif %}
+                  </span>
+                </p>
+              </div>
+
+              {% if req.status != 'refused' %}
+                {% if user == req.instructor or user == req.student %}
+                  <div class="ml-4">
+                    <a href="{% url 'appointments:request_update' req.pk %}"
+                       class="text-sm text-white bg-sky-600 hover:bg-sky-700 px-3 py-1 rounded">
+                      Gérer
+                    </a>
+                  </div>
+                {% endif %}
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-sm text-gray-500">Aucune demande en cours.</p>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

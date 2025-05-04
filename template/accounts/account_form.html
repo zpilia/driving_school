@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+  {% if view.object %}
+    Modifier le compte de {{ view.object.first_name }} {{ view.object.last_name }}
+  {% else %}
+    Créer un compte
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+  <div class="text-center mb-6">
+    <h1 class="text-2xl font-bold">
+      {% if view.object %}
+        Modifier le compte de {{ view.object.first_name }} {{ view.object.last_name }}
+      {% else %}
+        Créer un compte
+      {% endif %}
+    </h1>
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      {{ form.as_p }}
+    </div>
+    <div class="text-center mt-4">
+      <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-700 transition duration-200">Sauvegarder</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Intranet Auto-école{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+
+    <!-- Zone des messages (toasts) -->
+    {% if messages %}
+      <div class="toast-container">
+        {% for message in messages %}
+          <div class="toast
+            {% if message.tags == 'success' %}
+              bg-green-100 border border-green-300 text-green-800
+            {% elif message.tags == 'error' %}
+              bg-red-100 border border-red-300 text-red-800
+            {% elif message.tags == 'warning' %}
+              bg-yellow-100 border border-yellow-300 text-yellow-800
+            {% else %}
+              bg-gray-100 border border-gray-300 text-gray-800
+            {% endif %}
+          ">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.remove()">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+
+      <script>
+        setTimeout(() => {
+          document.querySelectorAll('.toast').forEach(toast => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
+          });
+        }, 3000);
+      </script>
+    {% endif %}
+
+    <!-- En-tête / Navigation -->
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div class="text-xl font-bold text-sky-600">
+          <a href="{% url 'home' %}">Auto-école</a>
+        </div>
+
+        <nav>
+          <ul class="flex flex-wrap items-center space-x-6 text-sm text-gray-700 font-medium">
+            {% if user.is_authenticated %}
+              {% if user.role == 'student' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'planning:schedule' %}" class="hover:text-sky-500">Mon planning</a></li>
+                <li><a href="{% url 'lessonpackages:lessonpackage_progress' %}" class="hover:text-sky-500">Mes Progression</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-sky-500">Mes rendez-vous</a></li>
+
+              {% elif user.role == 'instructor' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'planning:instructor_schedule' user.id %}" class="hover:text-sky-500">Mon planning</a></li>
+                <li><a href="{% url 'appointments:list' %}" class="hover:text-sky-500">Mes rendez-vous</a></li>
+
+              {% elif user.role == 'secretary' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-sky-500">Gérer les comptes</a></li>
+                <li><a href="{% url 'planning:general_schedule_default' %}" class="hover:text-sky-500">Planning général</a></li>
+
+              {% elif user.role == 'admin' %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="hover:text-sky-500">Tableau de bord</a></li>
+                <li><a href="{% url 'accounts:account_list' %}" class="hover:text-sky-500">Gérer les comptes</a></li>
+                <li><a href="{% url 'planning:general_schedule_default' %}" class="hover:text-sky-500">Planning général</a></li>
+              {% endif %}
+
+              <li>
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="flex items-center gap-1 text-red-600 hover:text-red-800 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9"></path>
+                    </svg>
+                  </button>
+                </form>
+              </li>
+
+            {% else %}
+              <li>
+                <a href="{% url 'login' %}" class="flex items-center gap-1 text-sky-500 hover:text-sky-800 font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9"></path>
+                    </svg>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="p-4 flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="bg-white shadow-inner">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-500">
+        &copy; {% now "Y" %} Auto-école. Tous droits réservés.
+      </div>
+    </footer>
+
+</body>
+</html>

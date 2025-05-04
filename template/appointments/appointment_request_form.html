@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load form_tags %}
+{% block title %}Demande de rendez-vous{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center p-12">
+  <div class="mx-auto w-full max-w-[550px] bg-white p-8 rounded shadow">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Demander un rendez-vous</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <!-- Instructeur -->
+      <div class="mb-5">
+        <label for="{{ form.instructor.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Instructeur
+        </label>
+        {{ form.instructor|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" }}
+        {{ form.instructor.errors }}
+      </div>
+
+      <!-- Date -->
+      <div class="mb-5">
+        <label for="{{ form.date.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Date
+        </label>
+        {{ form.date|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" }}
+        {{ form.date.errors }}
+      </div>
+
+      <!-- Heure -->
+      <div class="mb-5">
+        <label for="{{ form.time.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Heure
+        </label>
+        {{ form.time|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" }}
+        {{ form.time.errors }}
+      </div>
+
+      <!-- Lieu -->
+      <div class="mb-5">
+        <label for="{{ form.location.id_for_label }}" class="mb-3 block text-base font-medium text-[#07074D]">
+          Lieu
+        </label>
+        {{ form.location|add_class:"w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" }}
+        {{ form.location.errors }}
+      </div>
+
+      <!-- Bouton -->
+      <div>
+        <button type="submit"
+          class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
+          Envoyer la demande
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

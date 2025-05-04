@@ -1,0 +1,11 @@
+[
+    {
+        "model": "lessonpackages.lessonpackage",
+        "pk": 1,
+        "fields": {
+            "student": 1,
+            "total_hours": 20,
+            "used_hours": 5
+        }
+    }
+]
