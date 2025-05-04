@@ -8,6 +8,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import AppointmentRequest
 from .forms import AppointmentRequestForm, AppointmentRequestUpdateForm, AppointmentForm
+from django.urls import reverse
+
 
 from accounts.decorators import role_required
 from django.views.generic import DeleteView
@@ -18,7 +20,8 @@ from django.utils import timezone
 from .models import Appointment
 from django.contrib.auth import get_user_model
 User = get_user_model()
-from datetime import datetime, timedelta
+from django.views.decorators.http import require_POST
+
 
 
 class AppointmentListView(LoginRequiredMixin, ListView):
@@ -154,8 +157,13 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
         lesson_package = LessonPackage.objects.filter(student=student).first()
 
         if lesson_package and lesson_package.paid_hours > lesson_package.used_hours:
+            lesson_package.total_hours -= 1
+            lesson_package.used_hours += 1
+            lesson_package.save()
+
             messages.success(self.request, "Rendez-vous créé avec succès.")
             return super().form_valid(form)
+
         else:
             messages.error(self.request, "Cet étudiant n'a pas d'heures payées disponibles.")
             return self.form_invalid(form)
@@ -203,7 +211,7 @@ class AppointmentUpdateView(LoginRequiredMixin, UpdateView):
 
 
 @method_decorator(role_required(['secretary', 'admin', 'instructor']), name='dispatch')
-class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
+class AppointmentDeleteView(DeleteView):
     model = Appointment
     template_name = 'appointments/appointment_confirm_delete.html'
 
@@ -219,9 +227,28 @@ class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
                 raise Http404("Vous n'êtes pas autorisé à supprimer ce rendez-vous.")
         return super().dispatch(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "Rendez-vous supprimé avec succès.")
-        return super().delete(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+
+        appointment = self.get_object()
+        student = appointment.student
+
+        lesson_package = LessonPackage.objects.filter(student=student).first()
+
+        if lesson_package:
+            lesson_package.total_hours += 1
+            lesson_package.used_hours -= 1
+            lesson_package.save()
+
+            messages.success(request, "Les heures du forfait ont été ajustées avec succès.")
+
+            appointment.delete()
+
+            messages.success(request, "Le rendez-vous a été supprimé avec succès.")
+        else:
+            messages.error(request, "Le forfait de leçons de cet étudiant n'a pas été trouvé.")
+
+        return redirect(self.get_success_url())
+
 
 @method_decorator(role_required(['secretary', 'admin']), name='dispatch')
 class AppointmentView(LoginRequiredMixin, ListView):
