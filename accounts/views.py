@@ -35,7 +35,6 @@ from django.shortcuts import get_object_or_404
 @role_required(['student'])
 def student_dashboard(request):
     appointments = Appointment.objects.filter(student=request.user)
-    # Retrieve the next scheduled appointment for the logged-in student
     next_appointment = (
         Appointment.objects
         .filter(student=request.user, status='scheduled')
@@ -43,10 +42,8 @@ def student_dashboard(request):
         .first()
     )
 
-    # Retrieve all lesson packages linked to the student
     lesson_packages = LessonPackage.objects.filter(student=request.user)
 
-    # ➔ Chercher le premier forfait en cours (progression < 100%)
     forfait_en_cours = None
     for package in lesson_packages:
         if package.total_hours > 0:
@@ -64,7 +61,7 @@ def student_dashboard(request):
         'user': request.user,
         'next_appointment': next_appointment,
         'lesson_packages': lesson_packages,
-        'forfait_en_cours': forfait_en_cours,  # Ajout de l'avancement
+        'forfait_en_cours': forfait_en_cours,
     }
     return render(request, 'dashboard_student.html', context)
 
@@ -72,11 +69,18 @@ def student_dashboard(request):
 @login_required
 @role_required(['instructor'])
 def instructor_dashboard(request):
-    # Récupère les rendez-vous pour l'instructeur connecté
-    appointments = Appointment.objects.filter(instructor=request.user)
+    appointments = (
+        Appointment.objects
+        .filter(instructor=request.user, status='scheduled', date__gte=timezone.now().date())
+        .order_by('date', 'time')[:5]
+    )
+
+    next_appointment = appointments.first()
+
     context = {
         'user': request.user,
         'appointments': appointments,
+        'next_appointment': next_appointment,
     }
     return render(request, 'dashboard_instructor.html', context)
 
